@@ -11,6 +11,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import React, { useState } from "react"
 import FieldFormDate from "./FieldFormDate"
 import FieldFormAmount from "./FieldFormAmount"
+import Link from "next/link"
 
 export default function FilterSearchTransactions({ categories = [] }: { categories: string[]}) {
     const searchParams = useSearchParams()
@@ -18,6 +19,7 @@ export default function FilterSearchTransactions({ categories = [] }: { categori
     const { replace } = useRouter()
     
     const [enable, setEnable] = useState(false)
+    const [formKey, setFormKey] = useState(0)
 
     function handleSearch(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -57,7 +59,7 @@ export default function FilterSearchTransactions({ categories = [] }: { categori
                     title="Close filter search"    
                 >❌</button>
                 
-                <form onSubmit={handleSearch}
+                <form key={formKey} onSubmit={handleSearch}
                     className="flex gap-5"
                 >
                     <FieldFormDate />
@@ -107,9 +109,21 @@ export default function FilterSearchTransactions({ categories = [] }: { categori
                     <button type="submit">🔍Search</button>
                 </form>
             </div>
+            {searchParams.size !== 0 
+                && <Link href={"/records"} onClick={_ => setFormKey(k => k + 1)}>
+                    Clear filters
+                </Link>
+            }
             <hr />
             <br />
         </>
-        : <button onClick={_ => setEnable(true)}>Filter Search</button>
+        : <div className="flex gap-4">
+            <button onClick={_ => setEnable(true)}>Filter Search</button>
+            {searchParams.size !== 0 
+                && <Link href={"/records"} onClick={_ => setFormKey(k => k + 1)}>
+                    Clear filters
+                </Link>
+            }
+        </div>
 
 }
