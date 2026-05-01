@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model dummy_transactions {
+  trans_no         BigInt?
+  date             String? @db.Text
+  details          String? @db.Text
+  amount           BigInt?
+  transaction      String? @db.Text
+  transaction_mode String? @db.Text
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model dummy_transactions_2 {
+  trans_no         BigInt?
+  date             String? @db.Text
+  details          String? @db.Text
+  amount           BigInt?
+  transaction      String? @db.Text
+  transaction_mode String? @db.Text
+
+  @@ignore
+}
+
+model transactions {
+  trans_no         BigInt   @id @default(autoincrement())
+  date             DateTime @db.DateTime(0)
+  details          String   @db.Text
+  amount           Float
+  transaction      String   @db.Text
+  transaction_mode String   @db.Text
+  category         String   @db.Text
+}
+
+model transactions_dummy {
+  trans_no         Int      @id @default(autoincrement())
+  date             DateTime @db.DateTime(0)
+  details          String   @db.Text
+  amount           Float
+  transaction      String   @db.Text
+  transaction_mode String   @db.Text
+}
