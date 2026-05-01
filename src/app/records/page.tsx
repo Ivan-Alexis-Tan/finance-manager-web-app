@@ -29,9 +29,17 @@ export default async function Page(props: SearchParamsProps) {
         where: Object.keys(queries).length >= 1
             ? {
                 AND: [
-                    filterDate(queries.date as string, queries.date_op as typeof dateOpKeys[number]),
+                    filterDate(
+                        queries.date as string, 
+                        queries.date_op as typeof dateOpKeys[number],
+                        queries.init_date
+                    ),
                     { details: { contains: queries.details } },
-                    filterAmount(queries.amount as string, queries.amount_op as typeof amountOpKeys[number]),
+                    filterAmount(
+                        queries.amount as string, 
+                        queries.amount_op as typeof amountOpKeys[number],
+                        queries.init_amount
+                    ),
                     { transaction: { contains: queries.transaction } },
                     { transaction_mode: { contains: queries.transaction_mode } },
                     { category: { contains: queries.category } },
@@ -47,9 +55,17 @@ export default async function Page(props: SearchParamsProps) {
         where: Object.keys(queries).length >= 1
             ? {
                 AND: [
-                    filterDate(queries.date as string, queries.date_op as typeof dateOpKeys[number]),
+                    filterDate(
+                        queries.date as string, 
+                        queries.date_op as typeof dateOpKeys[number],
+                        queries.init_date
+                    ),
                     { details: { contains: queries.details } },
-                    filterAmount(queries.amount as string, queries.amount_op as typeof amountOpKeys[number]),
+                    filterAmount(
+                        queries.amount as string, 
+                        queries.amount_op as typeof amountOpKeys[number],
+                        queries.init_amount
+                    ),
                     { transaction: { contains: queries.transaction } },
                     { transaction_mode: { contains: queries.transaction_mode } },
                     { category: { contains: queries.category } },
