@@ -1,9 +1,11 @@
 "use server"
 
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
+import { evaluate } from "mathjs"
+
 import { prisma } from "../lib/prisma"
 import { schemaTransactionsFormData } from "../schemas/schemas"
-import { revalidatePath } from "next/cache"
 import { TransactionsActionState } from "../types/types"
 
 export async function createTransactions(
@@ -13,7 +15,7 @@ export async function createTransactions(
     const validatedFields = schemaTransactionsFormData.safeParse({
         date: new Date(formData.get("date") as string),
         details: formData.get("details"),
-        amount: formData.get("amount"),
+        amount: formData.get("amount") || evaluate(formData.get("calc_amount") as string),
         transaction: formData.get("transaction"),
         transaction_mode: formData.get("transaction_mode"),
         category: formData.get("category"),
@@ -66,7 +68,7 @@ export async function editTransaction(
     const validatedFields = schemaTransactionsFormData.safeParse({
         date: new Date(formData.get("date") as string),
         details: formData.get("details"),
-        amount: formData.get("amount"),
+        amount: formData.get("amount") || evaluate(formData.get("calc_amount") as string),
         transaction: formData.get("transaction"),
         transaction_mode: formData.get("transaction_mode"),
         category: formData.get("category"),

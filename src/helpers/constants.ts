@@ -7,3 +7,4 @@ export const transactionParamKeys = ["date", "date_op", "init_date", "details", 
 export const dateOpKeys = ["=", ">=", "<=", ">", "<", "between"] as const
 
 export const amountOpKeys = ["=", ">=", "<=", ">", "<", "between"] as const
+export const amountFormat = ["constant", "calculate"] as const

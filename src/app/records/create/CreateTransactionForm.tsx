@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 
 import { createTransactions } from "@/src/actions/actions"
 import { transactionMode, transactions } from "@/src/helpers/constants"
 import { capsEveryWord } from "@/src/helpers/helperFn"
 
 import FormErrorMessenger from "./FormErrorMessenger"
+import { AmountFormat } from "@/src/types/types"
 
 const formFieldStyle = "mb-7"
 const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
@@ -18,6 +19,7 @@ interface CreateTransactionCategories {
 
 export default function CreateTransactionForm({ categories = [] }: CreateTransactionCategories) {
     const [state, formAction] = useActionState(createTransactions, { message: null })
+    const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
 
     return (
         <form action={formAction}
@@ -61,14 +63,23 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
                 styles={`${formErrMsgStyle}`}
             />
 
-            <input type="number" 
-                name="amount"
-                placeholder="Amount"
-                min={0}
-                title="Amount"
-                aria-describedby="amount-error"
-                className={`${formFieldStyle} border-b-1`}
-            />
+            <div onDoubleClick={_ => setAmountFrmt(f => f === "calculate" ? "constant" : "calculate")}>
+                {amountFrmt === "constant"
+                    ? <input type="number" 
+                        name="amount"
+                        placeholder="Amount"
+                        min={0}
+                        title="Amount"
+                        aria-describedby="amount-error"
+                        className={`${formFieldStyle} border-b-1`}
+                    />
+                    : <input type="text" 
+                        name="calc_amount"
+                        placeholder="Calculate Amount"
+                        className={`${formFieldStyle} border-b-1`}
+                    />
+                }
+            </div>
             
             {/* Transaction Field */}
             <FormErrorMessenger describedBy="transaction-error"

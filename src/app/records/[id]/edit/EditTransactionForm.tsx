@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { transactionMode, transactions } from "@/src/helpers/constants";
 import { capsEveryWord } from "@/src/helpers/helperFn";
@@ -19,6 +19,7 @@ const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
 export default function EditTransactionForm({ defaultVals }: EditTransactionForm) {
     const actionFn = editTransaction.bind(null, defaultVals.trans_no as number)
     const [state, formAction] = useActionState(actionFn, { message: "" })
+    const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
 
     return (
         <div>
@@ -53,18 +54,32 @@ export default function EditTransactionForm({ defaultVals }: EditTransactionForm
                 />
 
                 {/* Amount Field */}
-                <FormErrorMessenger describedBy="amount-error"
+                <FormErrorMessenger describedBy={amountFrmt === "constant" ? "amount-error" : "calc-amount-error"}
                     errorState={state}
-                    colName="amount"
+                    colName={amountFrmt === "constant" ? "amount" : "calc_amount"}
                     styles={`${formErrMsgStyle}`}
                 />
-                <input type="text" 
-                    name="amount"
-                    placeholder="Amount"
-                    defaultValue={`${defaultVals.amount as Number}`}
-                    aria-describedby="amount-error"
-                    className={`${formFieldStyle} border-b-1`}
-                />
+                <div onDoubleClick={_ => setAmountFrmt(f => f === "constant" ? "calculate" : "constant")}>
+                    <p onClick={_ => setAmountFrmt(f => f === "constant" ? "calculate" : "constant")}>
+                        {capsEveryWord(amountFrmt)} amount:
+                    </p>
+                    {amountFrmt === "constant"
+                        ? <input type="number" 
+                            name="amount"
+                            placeholder="Amount"
+                            defaultValue={`${defaultVals.amount as Number}`}
+                            aria-describedby="amount-error"
+                            className={`${formFieldStyle} border-b-1`}
+                        />
+                        : <input type="text" 
+                            name="calc_amount"
+                            placeholder="Amount"
+                            defaultValue={`${defaultVals.amount as Number}`}
+                            aria-describedby="calc-amount-error"
+                            className={`${formFieldStyle} border-b-1`}
+                        />
+                    }
+                </div>
 
                 {/* Transaction Field */}
                 <FormErrorMessenger describedBy="transaction-error"
