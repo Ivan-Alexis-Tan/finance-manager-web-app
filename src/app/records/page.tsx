@@ -75,8 +75,6 @@ export default async function Page(props: SearchParamsProps) {
     })
     const categories = await getCategories()
 
-    console.log("queries =", queries)
-
     return (
         <div>
             <h1 className="text-center text-4xl font-bold">Records</h1>
