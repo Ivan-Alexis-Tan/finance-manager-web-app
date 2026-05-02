@@ -7,16 +7,19 @@ import { transactionMode, transactions } from "@/src/helpers/constants";
 import { capsEveryWord } from "@/src/helpers/helperFn";
 import { editTransaction } from "@/src/actions/actions";
 import { transactionsUncheckedCreateInput } from "@/src/generated/prisma/models";
+import { AmountFormat } from "@/src/types/types";
+
 import FormErrorMessenger from "../../create/FormErrorMessenger";
 
 interface EditTransactionForm {
-    defaultVals: transactionsUncheckedCreateInput
+    defaultVals: transactionsUncheckedCreateInput,
+    categories: string[]
 }
 
 const formFieldStyle = "mb-7"
 const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
 
-export default function EditTransactionForm({ defaultVals }: EditTransactionForm) {
+export default function EditTransactionForm({ defaultVals, categories = [] }: EditTransactionForm) {
     const actionFn = editTransaction.bind(null, defaultVals.trans_no as number)
     const [state, formAction] = useActionState(actionFn, { message: "" })
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
@@ -115,6 +118,22 @@ export default function EditTransactionForm({ defaultVals }: EditTransactionForm
                     {transactionMode.map(t => (<option key={t} value={t}>
                         {capsEveryWord(t)}
                     </option>))}
+                </select>
+                
+                {/* Category Field */}
+                <FormErrorMessenger describedBy="category-error"
+                    errorState={state}
+                    colName={"category"}
+                    styles={`${formErrMsgStyle}`}
+                />
+                <select name="category"
+                    defaultValue={defaultVals.category}
+                    title="Category"
+                    aria-describedby="category-eror"
+                >
+                    {categories.map(cat => (
+                        <option key={cat} value={cat}>{capsEveryWord(cat)}</option>
+                    ))}
                 </select>
                 
                 {/* Buttons and Backrefs */}
