@@ -10,7 +10,7 @@ export default function FieldFormDate() {
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
     
-    return <div>
+    return <div className="flex gap-2">
         <select name="date_op"
             value={operator}
             className="bg-gray-700"
@@ -25,18 +25,25 @@ export default function FieldFormDate() {
             ? <input type="date" 
                 name="date"
                 defaultValue={today}
+                className="border-b-1 py-1"
             />
-            : <div>
-                <label>From: </label>
-                <input type="date" 
-                    name="init_date"
-                    defaultValue={yesterday.toISOString().split("T")[0]}
-                />
-                <label>To: </label>
-                <input type="date" 
-                    name="date"
-                    defaultValue={today}
-                />
+            : <div className="flex flex-col justify-end">
+                <div>
+                    <label>Start: </label>
+                    <input type="date" 
+                        name="init_date"
+                        defaultValue={yesterday.toISOString().split("T")[0]}
+                    />
+                </div>
+                
+                <div className="flex justify-end">
+                    <label>End: </label>
+                    <input type="date" 
+                        name="date"
+                        defaultValue={today}
+                        className="border-b-1"
+                    />
+                </div>
             </div>
         }
     </div>

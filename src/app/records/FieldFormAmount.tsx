@@ -5,10 +5,12 @@ import { useState } from "react";
 
 type AmountOpKeys = typeof amountOpKeys[number]
 
+const fieldStyle = "border-b-1 py-1 w-30"
+
 export default function FieldFormAmount() {
     const [operator, setOperator] = useState<AmountOpKeys>("=")
 
-    return <div>
+    return <div className="flex gap-2 justify-between">
         <select name="amount_op"
             value={operator}
             className="bg-gray-700"
@@ -20,26 +22,32 @@ export default function FieldFormAmount() {
         </select>
 
         {operator === "between"
-            ? <div>
-                <input type="text" 
-                    name="init_amount"
-                    placeholder="Amount"
-                    defaultValue={""}
-                    className="bg-gray-700"
-                />
+            ? <div className="flex flex-col items-end gap-1">
+                <div>
+                    <label>Start: </label>
+                    <input type="text" 
+                        name="init_amount"
+                        placeholder="Amount"
+                        defaultValue={""}
+                        className={`${fieldStyle}`}
+                    />
+                </div>
 
-                <input type="text" 
-                    name="amount"
-                    placeholder="Amount"
-                    defaultValue={""}
-                    className="bg-gray-700"
-                />
+                <div>
+                    <label>End: </label>
+                    <input type="text" 
+                        name="amount"
+                        placeholder="Amount"
+                        defaultValue={""}
+                        className={`${fieldStyle}`}
+                    />
+                </div>
             </div>
             : <input type="text" 
                 name="amount"
                 placeholder="Amount"
                 defaultValue={""}
-                className="bg-gray-700"
+                className={`${fieldStyle}`}
             />
         }
     </div>
