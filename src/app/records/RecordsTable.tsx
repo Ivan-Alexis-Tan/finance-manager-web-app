@@ -38,8 +38,8 @@ export default function TransactionsTable({ transactionData = [] }: { transactio
                                 <td>{dateFormatter(`${data.date}`)}</td>
                                 <td>{data.details}</td>
                                 <td>₱{(data.amount)?.toLocaleString()}</td>
-                                <td>{data.transaction}</td>
-                                <td>{data.transaction_mode}</td>
+                                <td>{capsEveryWord(data.transaction)}</td>
+                                <td>{capsEveryWord(data.transaction_mode)}</td>
                                 <td>{capsEveryWord(data.category)}</td>
                             </tr>
                         ))}

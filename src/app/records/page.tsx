@@ -1,12 +1,13 @@
 import { prisma } from "@/src/lib/prisma"
 import Link from "next/link"
 
-import TransactionsTable from "./RecordsTable"
-import TransactionPagination from "./TransactionPagination"
-import FilterSearchTransactions from "./FilterSearchTransaction"
 import { getCategories } from "@/src/actions/actions"
 import { amountOpKeys, dateOpKeys, transactionParamKeys } from "@/src/helpers/constants"
 import { filterAmount, filterDate } from "@/src/actions/filteringHelpers"
+
+import TransactionsTable from "./RecordsTable"
+import TransactionPagination from "./TransactionPagination"
+import FilterSearchTransactions from "./FilterSearchTransaction"
 
 type TransactionParamKeys = Partial<Record<typeof transactionParamKeys[number], string>>
 
@@ -24,53 +25,33 @@ export default async function Page(props: SearchParamsProps) {
     }, {})
 
     const currentPage = searchParams?.page || 1;
+    const filterConfigs = [
+        filterDate(
+            queries.date as string, 
+            queries.date_op as typeof dateOpKeys[number],
+            queries.init_date
+        ),
+        { details: { contains: queries.details } },
+        filterAmount(
+            queries.amount as string, 
+            queries.amount_op as typeof amountOpKeys[number],
+            queries.init_amount
+        ),
+        { transaction: { contains: queries.transaction } },
+        { transaction_mode: { contains: queries.transaction_mode } },
+        { category: { contains: queries.category } },
+    ]
 
     const data = await prisma.transactions.findMany({
-        where: Object.keys(queries).length >= 1
-            ? {
-                AND: [
-                    filterDate(
-                        queries.date as string, 
-                        queries.date_op as typeof dateOpKeys[number],
-                        queries.init_date
-                    ),
-                    { details: { contains: queries.details } },
-                    filterAmount(
-                        queries.amount as string, 
-                        queries.amount_op as typeof amountOpKeys[number],
-                        queries.init_amount
-                    ),
-                    { transaction: { contains: queries.transaction } },
-                    { transaction_mode: { contains: queries.transaction_mode } },
-                    { category: { contains: queries.category } },
-                ]
-            } 
-            : undefined ,
+        where: (Object.keys(queries).length >= 1) ? { AND: filterConfigs } : undefined,
         orderBy: { date: "desc" },
         take: 20,
         skip: Number(currentPage) * 20 - 20,
     })
 
     const totalRows = await prisma.transactions.count({
-        where: Object.keys(queries).length >= 1
-            ? {
-                AND: [
-                    filterDate(
-                        queries.date as string, 
-                        queries.date_op as typeof dateOpKeys[number],
-                        queries.init_date
-                    ),
-                    { details: { contains: queries.details } },
-                    filterAmount(
-                        queries.amount as string, 
-                        queries.amount_op as typeof amountOpKeys[number],
-                        queries.init_amount
-                    ),
-                    { transaction: { contains: queries.transaction } },
-                    { transaction_mode: { contains: queries.transaction_mode } },
-                    { category: { contains: queries.category } },
-                ]
-            } 
+        where: (Object.keys(queries).length >= 1) 
+            ? { AND: filterConfigs } 
             : undefined
     })
     const categories = await getCategories()
@@ -80,7 +61,7 @@ export default async function Page(props: SearchParamsProps) {
             <h1 className="text-center text-4xl font-bold">Records</h1>
             
             <Link href="/records/create" className="flex justify-center items-center m-5 gap-2">
-                <span className="bg-[hsl(173,50%,50%)] rounded-full p-1">
+                <span className="bg-white rounded-full p-1">
                     ➕
                 </span> New Transaction
             </Link>
