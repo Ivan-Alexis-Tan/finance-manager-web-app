@@ -13,21 +13,19 @@ export default function TransactionPagination({ totalRows }: { totalRows: number
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get("page")) || 1;
 
-    const totalPages = Math.floor(totalRows / 20)
+    const totalPages = Math.ceil(totalRows / 20)
     const params = new URLSearchParams(searchParams)
 
     function pageNumbers(pageNum: number) {
-        const pages = {
-            l: pageNum-2, 
-            lm: pageNum-1, 
-            m: pageNum, 
-            rm: pageNum+1, 
-            r: pageNum+2,
+        if (totalPages <= 5) {
+            const result = []
+            for (let i = totalPages; i >= 1; i--) result.push(i);
+            
+            return result.sort()
         }
-        
-        if (pages.r > totalPages) return [totalPages-4, totalPages-3, totalPages-2, totalPages-1, totalPages]
-        if (pages.l <= 0) return [1, 2, 3, 4, 5]
-        return [pages.l, pages.lm, pages.m, pages.rm, pages.r]
+
+        if (currentPage <= 3) return [1, 2, 3, 4, 5]
+        return [pageNum-2, pageNum-1, pageNum, pageNum+1, pageNum+2]
     }
 
     function createURL(pageNum: number | string) {
