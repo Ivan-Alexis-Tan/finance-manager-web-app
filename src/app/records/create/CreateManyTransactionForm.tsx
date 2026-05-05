@@ -27,7 +27,7 @@ const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
 export function useManyTransactions() {
     const [stage, setStage] = useState<InputRow[]>(() => {
         if (typeof window === "undefined") return []
-        const saved = localStorage.getItem("staged_transactions")
+        const saved = localStorage.getItem("staged_transactions") as string
         return saved ? JSON.parse(saved) : []
     })
 
@@ -79,7 +79,7 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
 
     function addToStaged() {
         const data = validate(transactionRow)
-        const errors = (data as TransactionsActionState).errors as NonNullable<TransactionErrorsStates>
+        const errors = (data as TransactionsActionState)?.errors as NonNullable<TransactionErrorsStates> ?? []
         
         if (Object.keys(errors).length >= 1) {
             setErrorMessage(data as TransactionsActionState)

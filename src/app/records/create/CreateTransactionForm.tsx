@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, useState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import Link from "next/link"
 
 import { createTransactions } from "@/src/actions/actions"
@@ -17,12 +17,15 @@ const activeModeStyle = "text-[hsl(0,0%,0%)] bg-[hsl(0,0%,100%)] font-bold"
 
 export default function CreateTransactionForm({ categories = [] }: CreateTransactionCategories) {
     const [state, formAction] = useActionState(createTransactions, { message: null })
-    const [createMany, setCreateMany] = useState(() => {
-        const draftLength = JSON.parse(localStorage.getItem("staged_transactions") as string).length
-        return (draftLength >= 1) ? true : false
-    })
+    const [createMany, setCreateMany] = useState(false)
     
     const { stage, removeAll, setStates } = useManyTransactions()
+
+    useEffect(() => {
+        const draft = localStorage.getItem("staged_transactions")
+        if (!draft) return
+        if (JSON.parse(draft as string).length >= 1) setCreateMany(true)
+    }, [])
 
     return (
         <div className="flex flex-col items-center">
