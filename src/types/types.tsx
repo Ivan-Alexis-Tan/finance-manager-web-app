@@ -1,5 +1,5 @@
 import type { transactionsCreateInput } from "../generated/prisma/models";
-import { amountFormat } from "../helpers/constants";
+import { amountFormat, transactionMode, transactions } from "../helpers/constants";
 
 export interface TransactionsActionState { 
     errors?: {
@@ -14,5 +14,23 @@ export interface TransactionsActionState {
 }
 
 export type TransactionColumnNames = keyof transactionsCreateInput
+export type TransactionColumn = typeof transactions[number]
+export type TransactionMode = typeof transactionMode[number]
 
 export type AmountFormat = typeof amountFormat[number] 
+
+export interface FormErrorMsgerType {
+    errorState: TransactionsActionState 
+    describedBy: string
+    styles: string
+    colName: keyof NonNullable<TransactionsActionState['errors']>
+}
+
+export interface Transaction {
+    date: Date;
+    details: string;
+    amount: number;
+    transaction: TransactionColumn;
+    transaction_mode: TransactionMode;
+    category: string;
+}
