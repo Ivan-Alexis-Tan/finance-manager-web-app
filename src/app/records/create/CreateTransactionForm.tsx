@@ -1,149 +1,110 @@
 "use client"
 
-import Link from "next/link"
 import { useActionState, useState } from "react"
+import Link from "next/link"
 
 import { createTransactions } from "@/src/actions/actions"
-import { transactionMode, transactions } from "@/src/helpers/constants"
-import { capsEveryWord } from "@/src/helpers/helperFn"
+import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn"
 
-import FormErrorMessenger from "./FormErrorMessenger"
-import { AmountFormat } from "@/src/types/types"
-
-const formFieldStyle = "mb-7"
-const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
+import TransactionFormFields from "./TransactionFormFields"
+import CreateManyTransactionForm, { useManyTransactions } from "./CreateManyTransactionForm"
 
 interface CreateTransactionCategories {
     categories: string[]
 }
 
+const activeModeStyle = "text-[hsl(0,0%,0%)] bg-[hsl(0,0%,100%)] font-bold"
+
 export default function CreateTransactionForm({ categories = [] }: CreateTransactionCategories) {
     const [state, formAction] = useActionState(createTransactions, { message: null })
-    const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
+    const [createMany, setCreateMany] = useState(() => {
+        const draftLength = JSON.parse(localStorage.getItem("staged_transactions") as string).length
+        return (draftLength >= 1) ? true : false
+    })
+    
+    const { stage, removeAll, setStates } = useManyTransactions()
 
     return (
-        <form action={formAction}
-            className="flex flex-col"
-        >
-            {/* Date Field */}
-            <FormErrorMessenger describedBy="date-error"
-                errorState={state}
-                colName="date"
-                styles={`${formErrMsgStyle}`}
-            />
+        <div className="flex flex-col items-center">
+            <div className="flex justify-evenly items-center mt-3 mb-7 p-1 rounded-full w-70 text-center bg-[hsl(0,0%,13%)]">
+                <p className={`${!createMany && activeModeStyle} p-2 rounded-full`}
+                    onClick={_ => setCreateMany(false)}
+                >Create One</p>
 
-            <input type="date" 
-                name="date"
-                defaultValue={new Date().toISOString().split("T")[0]}
-                className={`${formFieldStyle} border-b-1`}
-                title="Date"
-                // style={{ all: "revert" }}
-                aria-describedby="date-error"
-            />
-            
-            {/* Details Field */}
-            <FormErrorMessenger describedBy="details-error"
-                errorState={state}
-                colName="details"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <input type="text" 
-                name="details"
-                placeholder="Details"
-                title="Details"
-                aria-describedby="details-error"
-                className={`${formFieldStyle} border-b-1`}
-            />
-
-            {/* Amount Field */}
-            <FormErrorMessenger describedBy="amount-error"
-                errorState={state}
-                colName="amount"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <div onDoubleClick={_ => setAmountFrmt(f => f === "calculate" ? "constant" : "calculate")}>
-                {amountFrmt === "constant"
-                    ? <input type="number" 
-                        name="amount"
-                        placeholder="Amount"
-                        min={0}
-                        title="Amount"
-                        aria-describedby="amount-error"
-                        className={`${formFieldStyle} border-b-1`}
-                    />
-                    : <input type="text" 
-                        name="calc_amount"
-                        placeholder="Calculate Amount"
-                        className={`${formFieldStyle} border-b-1`}
-                    />
-                }
+                <p className={`${createMany && activeModeStyle} p-2 rounded-full `}
+                    onClick={_ => setCreateMany(true)}
+                >Create Many</p>
             </div>
             
-            {/* Transaction Field */}
-            <FormErrorMessenger describedBy="transaction-error"
-                errorState={state}
-                colName="transaction"
-                styles={`${formErrMsgStyle}`}
-            />
+            {!createMany 
+                ? <form action={formAction}
+                    className="flex flex-col"
+                >
+                    <TransactionFormFields errState={state} categories={categories} />
+                    
+                    <div className="flex justify-between items-center pt-5">
+                        <Link href={"/records"} className="hover:font-bold hover:text-[hsl(54,100%,50%)]" title="Back to records page">
+                            <strong>&larr;</strong> Records
+                        </Link>
+                        <button title="Save transaction" className="text-xl">💾</button>
+                    </div>
 
-            <select name="transaction" 
-                className={`${formFieldStyle} bg-gray-700`}
-                title="Transaction"
-                aria-describedby="transaction"
-                defaultValue=""
-            >
-                <option value="" disabled>Transaction</option>
-                {transactions.map(t => (<option key={t} value={t}>
-                    {capsEveryWord(t)}
-                </option>))}
-            </select>
-            
-            {/* Transaction Mode Field */}
-            <FormErrorMessenger describedBy="transaction_mode"
-                errorState={state}
-                colName="transaction_mode"
-                styles={`${formErrMsgStyle}`}
-            />
+                </form>
+                : <div className="flex justify-between gap-15 w-6xl">
+                    {stage.length >= 1
+                        ? <div className="flex flex-col items-start gap-2 w-full border-1 border-white">
+                            <div className="flex gap-5">
+                                <button title="Upload items"
+                                >📨</button>
 
-            <select name="transaction_mode" 
-                className={`${formFieldStyle} bg-gray-700`}
-                title="Transaction Mode"
-                aria-describedby="transaction_mode-error"
-                defaultValue=""
-            >
-                <option value="" disabled>Transaction Mode</option>
-                {transactionMode.map(t => (<option key={t} value={t}>
-                    {capsEveryWord(t)}
-                </option>))}
-            </select>
-            
-            {/* Categories Field */}
-            <FormErrorMessenger describedBy="category"
-                errorState={state}
-                colName="category"
-                styles={`${formErrMsgStyle}`}
-            />
-            
-            <select name="category"
-                title="Category"
-                defaultValue=""
-                className={`${formFieldStyle} bg-gray-700`}
-                aria-describedby="category-error"
-            >
-                <option value="" disabled>Category</option>
-                {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                ))}
-            </select>
+                                <button title="Delete all items"
+                                    onClick={_ => {
+                                        const confirmed = window.confirm("Confirm delete all items.")
+                                        if (!confirmed) return null;
+                                        removeAll()
+                                    }}
+                                >🗑️</button>
+                            </div>
 
-            <div className="flex justify-between items-center pt-5">
-                <Link href={"/records"} className="hover:font-bold hover:text-[hsl(54,100%,50%)]" title="Back to records page">
-                    <strong>&larr;</strong> Records
-                </Link>
-                <button title="Save transaction" className="text-xl">💾</button>
-            </div>
-        </form>
+                            <table className="w-full bg-gray-700 border-collapse mb-5">
+                                <thead>
+                                    <tr className="border-b-[1px] border-b-gray-900 font-bold">
+                                        <td></td>
+                                        <td>Date</td>
+                                        <td>Details</td>
+                                        <td>Amount</td>
+                                        <td>Transaction</td>
+                                        <td>Transaction Mode</td>
+                                        <td>Category</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {stage.map(s => (
+                                        <tr key={s.trans_no}>
+                                            <td>
+                                                <span title={`Edit ${s.details}`}
+                                                >✏️</span>
+                                                <span title={`Delete ${s.details}`}
+                                                >🗑️</span>
+                                            </td>
+                                            <td>{dateFormatter(s.date as string)}</td>
+                                            <td>{s.details}</td>
+                                            <td>{s.amount}</td>
+                                            <td>{capsEveryWord(s.transaction)}</td>
+                                            <td>{capsEveryWord(s.transaction_mode)}</td>
+                                            <td>{capsEveryWord(s.category)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        : <div>No transaction to be committed.</div>
+                    }
+
+                    {/* Form Field */}
+                    <CreateManyTransactionForm categories={categories} setStates={setStates} />
+                </div>
+            }
+        </div>
     )
 }
