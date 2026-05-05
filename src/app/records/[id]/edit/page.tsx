@@ -18,7 +18,10 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
                 Edit Transaction
             </h1>
 
-            <EditTransactionForm defaultVals={transactionData as transactionsUncheckedCreateInput} categories={categories} />
+            <EditTransactionForm 
+                defaultVals={transactionData as transactionsUncheckedCreateInput} 
+                categories={categories} 
+            />
         </div>
     )
 }

@@ -12,6 +12,7 @@ export interface TransactionsActionState {
     };
     message?: string | null; 
 }
+export type TransactionErrorsStates = TransactionsActionState['errors']
 
 export type TransactionColumnNames = keyof transactionsCreateInput
 export type TransactionColumn = typeof transactions[number]

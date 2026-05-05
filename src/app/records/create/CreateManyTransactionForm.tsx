@@ -1,17 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { SetStateAction } from "react"
+import Link from "next/link"
 
-import { AmountFormat, Transaction } from "@/src/types/types"
+import { AmountFormat, Transaction, TransactionErrorsStates, TransactionsActionState } from "@/src/types/types"
 import { transactionMode, transactions } from "@/src/helpers/constants"
 import { capsEveryWord } from "@/src/helpers/helperFn"
 import { transactionsCreateInput } from "@/src/generated/prisma/models"
 import { schemaTransactionsFormData } from "@/src/schemas/schemas"
 
 import FormErrorMessenger from "./FormErrorMessenger"
-import Link from "next/link"
-import { redirect } from "next/navigation"
+
 
 type InputRow = NonNullable<transactionsCreateInput>
 interface CreateManyTransaction { 
@@ -64,9 +63,15 @@ function emptyRows(): InputRow {
     }
 }
 
+const errorDefault: TransactionsActionState = {
+    errors: {},
+    message: "",
+}
+
 export default function CreateManyTransactionForm({ categories = [], setStates }: CreateManyTransaction) {
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
     const [transactionRow, setTransactionRow] = useState<InputRow>(emptyRows())
+    const [errorMessage, setErrorMessage] = useState<TransactionsActionState>(errorDefault)
 
     const setRow = (field: keyof NonNullable<transactionsCreateInput>) => (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -74,11 +79,15 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
 
     function addToStaged() {
         const data = validate(transactionRow)
-        const id = setStates.stage.reduce((acc: number, s) => Math.max(Number(s.trans_no), acc) + 1, 1)
+        const errors = (data as TransactionsActionState).errors as NonNullable<TransactionErrorsStates>
         
-        console.log(`data =`, data)
-        console.log(`id =`, id)
-        
+        if (Object.keys(errors).length >= 1) {
+            setErrorMessage(data as TransactionsActionState)
+            return
+        }
+        setErrorMessage(errorDefault)
+
+        const id = setStates.stage.reduce((acc: number, s) => Math.max(Number(s.trans_no), acc) + 1, 1)        
         setStates.setStage(p => ([...p, {trans_no: id, ...data as Transaction}]))
     }
 
@@ -86,11 +95,11 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
         <div>
             <div className="flex flex-col">
                 {/* Date Field */}
-                {/* <FormErrorMessenger describedBy="date-error"
-                    errorState={errState}
+                <FormErrorMessenger describedBy="date-error"
+                    errorState={errorMessage}
                     colName="date"
                     styles={`${formErrMsgStyle}`}
-                /> */}
+                />
     
                 <input type="date" 
                     name="date"
@@ -103,11 +112,11 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
                 />
                 
                 {/* Details Field */}
-                {/* <FormErrorMessenger describedBy="details-error"
-                    errorState={errState}
+                <FormErrorMessenger describedBy="details-error"
+                    errorState={errorMessage}
                     colName="details"
                     styles={`${formErrMsgStyle}`}
-                /> */}
+                />
     
                 <input type="text" 
                     name="details"
@@ -120,12 +129,11 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
                 />
     
                 {/* Amount Field */}
-                {/* <FormErrorMessenger describedBy="amount-error"
-                    errorState={errState}
+                <FormErrorMessenger describedBy="amount-error"
+                    errorState={errorMessage}
                     colName="amount"
                     styles={`${formErrMsgStyle}`}
-                /> */}
-    
+                />
                 <div onDoubleClick={_ => setAmountFrmt(f => f === "calculate" ? "constant" : "calculate")}>
                     {amountFrmt === "constant"
                         ? <input type="number" 
@@ -149,11 +157,11 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
                 </div>
                 
                 {/* Transaction Field */}
-                {/* <FormErrorMessenger describedBy="transaction-error"
-                    errorState={errState}
+                <FormErrorMessenger describedBy="transaction-error"
+                    errorState={errorMessage}
                     colName="transaction"
                     styles={`${formErrMsgStyle}`}
-                /> */}
+                />
     
                 <select name="transaction" 
                     className={`${formFieldStyle} bg-gray-700`}
@@ -169,11 +177,11 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
                 </select>
                 
                 {/* Transaction Mode Field */}
-                {/* <FormErrorMessenger describedBy="transaction_mode"
-                    errorState={errState}
+                <FormErrorMessenger describedBy="transaction_mode"
+                    errorState={errorMessage}
                     colName="transaction_mode"
                     styles={`${formErrMsgStyle}`}
-                /> */}
+                />
     
                 <select name="transaction_mode" 
                     className={`${formFieldStyle} bg-gray-700`}
@@ -189,11 +197,11 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
                 </select>
                 
                 {/* Categories Field */}
-                {/* <FormErrorMessenger describedBy="category"
-                    errorState={errState}
+                <FormErrorMessenger describedBy="category"
+                    errorState={errorMessage}
                     colName="category"
                     styles={`${formErrMsgStyle}`}
-                /> */}
+                />
                 
                 <select name="category"
                     title="Category"
@@ -217,12 +225,13 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
                         onClick={addToStaged}
                     >💾</button>
                 </div>
+
             </div>
         </div>
     )
 }
 
-function validate(data: InputRow) {
+function validate(data: InputRow): TransactionsActionState | Transaction {
     const validated = schemaTransactionsFormData.safeParse({
         date: new Date(data.date as string),
         details: data.details,
