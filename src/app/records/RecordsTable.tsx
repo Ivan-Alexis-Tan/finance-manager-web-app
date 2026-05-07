@@ -6,6 +6,7 @@ import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn";
 import { deleteTransaction } from "@/src/actions/actions";
 
 type TransactionData = transactionsUncheckedCreateInput[]
+const tdStyles = "p-[3px] max-w-[10rem]"
 
 export default function TransactionsTable({ transactionData = [] }: { transactionData: TransactionData }) {
     return (
@@ -15,12 +16,12 @@ export default function TransactionsTable({ transactionData = [] }: { transactio
                     <thead>
                         <tr className="border-b-[1px] border-b-gray-900 font-bold">
                             <td></td>
-                            <td>Date</td>
-                            <td>Details</td>
-                            <td>Amount</td>
-                            <td>Transaction</td>
-                            <td>Transaction Mode</td>
-                            <td>Category</td>
+                            <td className={`${tdStyles}`}>Date</td>
+                            <td className={`${tdStyles}`}>Details</td>
+                            <td className={`${tdStyles}`}>Amount</td>
+                            <td className={`${tdStyles}`}>Transaction</td>
+                            <td className={`${tdStyles}`}>Transaction Mode</td>
+                            <td className={`${tdStyles}`}>Category</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,12 +36,12 @@ export default function TransactionsTable({ transactionData = [] }: { transactio
                                         deleteTransaction(Number(data.trans_no))
                                     }}>🗑️</button>
                                 </td>
-                                <td>{dateFormatter(`${data.date}`)}</td>
-                                <td>{data.details}</td>
-                                <td>₱{(data.amount)?.toLocaleString()}</td>
-                                <td>{capsEveryWord(data.transaction)}</td>
-                                <td>{capsEveryWord(data.transaction_mode)}</td>
-                                <td>{capsEveryWord(data.category)}</td>
+                                <td className={`${tdStyles}`}>{dateFormatter(`${data.date}`)}</td>
+                                <td className={`${tdStyles}`}>{data.details}</td>
+                                <td className={`${tdStyles}`}>₱{(data.amount)?.toLocaleString()}</td>
+                                <td className={`${tdStyles}`}>{capsEveryWord(data.transaction)}</td>
+                                <td className={`${tdStyles}`}>{capsEveryWord(data.transaction_mode)}</td>
+                                <td className={`${tdStyles}`}>{capsEveryWord(data.category)}</td>
                             </tr>
                         ))}
                     </tbody>
