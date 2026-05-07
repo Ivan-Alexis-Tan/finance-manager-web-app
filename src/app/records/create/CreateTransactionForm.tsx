@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react"
 import Link from "next/link"
 
-import { createTransactions } from "@/src/actions/actions"
+import { createManyTransactions, createTransactions } from "@/src/actions/actions"
 import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn"
 
 import TransactionFormFields from "./TransactionFormFields"
@@ -18,9 +18,13 @@ const tdStyles = "p-[3px] max-w-[10rem]"
 
 export default function CreateTransactionForm({ categories = [] }: CreateTransactionCategories) {
     const [state, formAction] = useActionState(createTransactions, { message: null })
-    const [createMany, setCreateMany] = useState(false)
-    
-    const { stage, removeAll, setStates } = useManyTransactions()
+    const [createMany, setCreateMany] = useState(false)  
+    const { 
+        stage, 
+        removeItem, 
+        removeAll,
+        setStates 
+    } = useManyTransactions()
 
     useEffect(() => {
         const draft = localStorage.getItem("staged_transactions")
@@ -70,7 +74,14 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
                             {/* Upload and Delete Transaction */}
                             <div className="flex gap-10 items-center p-2">
                                 <button title="Upload items"
-                                >📨</button>
+                                    onClick={_ => {
+                                        const confirmed = window.confirm("Confirm upload items.")
+                                        if (!confirmed) return null
+                                        
+                                        createManyTransactions(stage)
+                                        removeAll()
+                                    }}
+                                >📨 Upload</button>
 
                                 <button title="Delete all items"
                                     onClick={_ => {
@@ -78,7 +89,7 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
                                         if (!confirmed) return null;
                                         removeAll()
                                     }}
-                                >🗑️</button>
+                                >🗑️ Delete all</button>
                             </div>
                             
                             {/* Transaction Table */}
@@ -100,6 +111,11 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
                                             <tr key={s.trans_no}>
                                                 <td>
                                                     <span title={`Delete ${s.details}`}
+                                                        onClick={_ => {
+                                                            const confirmed = window.confirm(`Confirm delete "${s.details}"`)
+                                                            if (!confirmed) return
+                                                            removeItem(s.trans_no as number)
+                                                        }}
                                                     >🗑️</span>
                                                 </td>
                                                 <td className={`${tdStyles}`}>{dateFormatter(s.date as string)}</td>
