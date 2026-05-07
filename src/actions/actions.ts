@@ -7,6 +7,7 @@ import { evaluate } from "mathjs"
 import { prisma } from "../lib/prisma"
 import { schemaTransactionsFormData } from "../schemas/schemas"
 import { TransactionsActionState } from "../types/types"
+import { transactionsCreateInput } from "../generated/prisma/models"
 
 export async function createTransactions(
     prevState: TransactionsActionState, 
@@ -122,4 +123,19 @@ export async function getCategories() {
         if (row.category !== "--" && row.category !== "???") acc.push(row.category);
         return acc
     }, []).sort()
+}
+
+export async function createManyTransactions(transactionRows: transactionsCreateInput[]) {
+    const refinedRows = transactionRows.map(({trans_no, ...rest}) => rest)
+    
+    try {
+        await prisma.transactions.createMany({
+            data: refinedRows
+        })
+    }
+    catch(err) {
+        console.log("ERROR:", err)
+        return { message: "ERROR: Failed to create transactions."}
+    }
+    redirect("/records")
 }
