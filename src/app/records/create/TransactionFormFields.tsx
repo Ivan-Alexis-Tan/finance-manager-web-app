@@ -19,7 +19,7 @@ interface TransactionFormFields {
 export default function TransactionFormFields({ errState, categories }: TransactionFormFields) {
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
     return (
-        <>
+        <div className="flex flex-col max-w-[20rem] w-full">
             {/* Date Field */}
             <FormErrorMessenger describedBy="date-error"
                 errorState={errState}
@@ -66,12 +66,12 @@ export default function TransactionFormFields({ errState, categories }: Transact
                         min={0}
                         title="Amount"
                         aria-describedby="amount-error"
-                        className={`${formFieldStyle} border-b-1`}
+                        className={`${formFieldStyle} border-b-1 w-full`}
                     />
                     : <input type="text" 
                         name="calc_amount"
                         placeholder="Calculate Amount"
-                        className={`${formFieldStyle} border-b-1`}
+                        className={`${formFieldStyle} border-b-1 w-full`}
                     />
                 }
             </div>
@@ -132,6 +132,6 @@ export default function TransactionFormFields({ errState, categories }: Transact
                     <option key={cat} value={cat}>{cat}</option>
                 ))}
             </select>
-        </>
+        </div>
     )
 }

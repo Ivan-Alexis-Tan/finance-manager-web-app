@@ -92,141 +92,139 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
     }
 
     return (
-        <div>
-            <div className="flex flex-col">
-                {/* Date Field */}
-                <FormErrorMessenger describedBy="date-error"
-                    errorState={errorMessage}
-                    colName="date"
-                    styles={`${formErrMsgStyle}`}
-                />
-    
-                <input type="date" 
-                    name="date"
-                    value={`${transactionRow.date}`}
-                    className={`${formFieldStyle} border-b-1`}
-                    title="Date"
-                    // style={{ all: "revert" }}
-                    aria-describedby="date-error"
-                    onChange={setRow("date")}
-                />
-                
-                {/* Details Field */}
-                <FormErrorMessenger describedBy="details-error"
-                    errorState={errorMessage}
-                    colName="details"
-                    styles={`${formErrMsgStyle}`}
-                />
-    
-                <input type="text" 
-                    name="details"
-                    placeholder="Details"
-                    title="Details"
-                    aria-describedby="details-error"
-                    className={`${formFieldStyle} border-b-1`}
-                    onChange={setRow("details")}
-                    value={transactionRow.details}
-                />
-    
-                {/* Amount Field */}
-                <FormErrorMessenger describedBy="amount-error"
-                    errorState={errorMessage}
-                    colName="amount"
-                    styles={`${formErrMsgStyle}`}
-                />
-                <div onDoubleClick={_ => setAmountFrmt(f => f === "calculate" ? "constant" : "calculate")}>
-                    {amountFrmt === "constant"
-                        ? <input type="number" 
-                            name="amount"
-                            placeholder="Amount"
-                            min={0}
-                            title="Amount"
-                            aria-describedby="amount-error"
-                            className={`${formFieldStyle} border-b-1`}
-                            value={transactionRow.amount}
-                            onChange={setRow("amount")}
-                        />
-                        : <input type="text" 
-                            name="calc_amount"
-                            placeholder="Calculate Amount"
-                            className={`${formFieldStyle} border-b-1`}
-                            value={transactionRow.amount}
-                            onChange={setRow("amount")}
-                        />
-                    }
-                </div>
-                
-                {/* Transaction Field */}
-                <FormErrorMessenger describedBy="transaction-error"
-                    errorState={errorMessage}
-                    colName="transaction"
-                    styles={`${formErrMsgStyle}`}
-                />
-    
-                <select name="transaction" 
-                    className={`${formFieldStyle} bg-gray-700`}
-                    title="Transaction"
-                    aria-describedby="transaction"
-                    value={transactionRow.transaction}
-                    onChange={setRow("transaction")}
-                >
-                    <option value="" disabled>Transaction</option>
-                    {transactions.map(t => (<option key={t} value={t}>
-                        {capsEveryWord(t)}
-                    </option>))}
-                </select>
-                
-                {/* Transaction Mode Field */}
-                <FormErrorMessenger describedBy="transaction_mode"
-                    errorState={errorMessage}
-                    colName="transaction_mode"
-                    styles={`${formErrMsgStyle}`}
-                />
-    
-                <select name="transaction_mode" 
-                    className={`${formFieldStyle} bg-gray-700`}
-                    title="Transaction Mode"
-                    aria-describedby="transaction_mode-error"
-                    value={transactionRow.transaction_mode}
-                    onChange={setRow("transaction_mode")}
-                >
-                    <option value="" disabled>Transaction Mode</option>
-                    {transactionMode.map(t => (<option key={t} value={t}>
-                        {capsEveryWord(t)}
-                    </option>))}
-                </select>
-                
-                {/* Categories Field */}
-                <FormErrorMessenger describedBy="category"
-                    errorState={errorMessage}
-                    colName="category"
-                    styles={`${formErrMsgStyle}`}
-                />
-                
-                <select name="category"
-                    title="Category"
-                    className={`${formFieldStyle} bg-gray-700`}
-                    aria-describedby="category-error"
-                    value={transactionRow.category}
-                    onChange={setRow("category")}
-                >
-                    <option value="" disabled>Category</option>
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </select>
+        <div className="flex flex-col max-w-sm">
+            {/* Date Field */}
+            <FormErrorMessenger describedBy="date-error"
+                errorState={errorMessage}
+                colName="date"
+                styles={`${formErrMsgStyle}`}
+            />
 
-                <div className="flex justify-between items-center pt-5">
-                    <Link href={"/records"} className="hover:font-bold hover:text-[hsl(54,100%,50%)]" title="Back to records page">
-                        <strong>&larr;</strong> Records
-                    </Link>
-                    <button title="Save transaction" 
-                        className="text-xl"
-                        onClick={addToStaged}
-                    >💾</button>
-                </div>
+            <input type="date" 
+                name="date"
+                value={`${transactionRow.date}`}
+                className={`${formFieldStyle} border-b-1`}
+                title="Date"
+                // style={{ all: "revert" }}
+                aria-describedby="date-error"
+                onChange={setRow("date")}
+            />
+            
+            {/* Details Field */}
+            <FormErrorMessenger describedBy="details-error"
+                errorState={errorMessage}
+                colName="details"
+                styles={`${formErrMsgStyle}`}
+            />
 
+            <input type="text" 
+                name="details"
+                placeholder="Details"
+                title="Details"
+                aria-describedby="details-error"
+                className={`${formFieldStyle} border-b-1`}
+                onChange={setRow("details")}
+                value={transactionRow.details}
+            />
+
+            {/* Amount Field */}
+            <FormErrorMessenger describedBy="amount-error"
+                errorState={errorMessage}
+                colName="amount"
+                styles={`${formErrMsgStyle}`}
+            />
+            <div onDoubleClick={_ => setAmountFrmt(f => f === "calculate" ? "constant" : "calculate")}>
+                {amountFrmt === "constant"
+                    ? <input type="number" 
+                        name="amount"
+                        placeholder="Amount"
+                        min={0}
+                        title="Amount"
+                        aria-describedby="amount-error"
+                        className={`${formFieldStyle} border-b-1`}
+                        value={transactionRow.amount}
+                        onChange={setRow("amount")}
+                    />
+                    : <input type="text" 
+                        name="calc_amount"
+                        placeholder="Calculate Amount"
+                        className={`${formFieldStyle} border-b-1`}
+                        value={transactionRow.amount}
+                        onChange={setRow("amount")}
+                    />
+                }
             </div>
+            
+            {/* Transaction Field */}
+            <FormErrorMessenger describedBy="transaction-error"
+                errorState={errorMessage}
+                colName="transaction"
+                styles={`${formErrMsgStyle}`}
+            />
+
+            <select name="transaction" 
+                className={`${formFieldStyle} bg-gray-700`}
+                title="Transaction"
+                aria-describedby="transaction"
+                value={transactionRow.transaction}
+                onChange={setRow("transaction")}
+            >
+                <option value="" disabled>Transaction</option>
+                {transactions.map(t => (<option key={t} value={t}>
+                    {capsEveryWord(t)}
+                </option>))}
+            </select>
+            
+            {/* Transaction Mode Field */}
+            <FormErrorMessenger describedBy="transaction_mode"
+                errorState={errorMessage}
+                colName="transaction_mode"
+                styles={`${formErrMsgStyle}`}
+            />
+
+            <select name="transaction_mode" 
+                className={`${formFieldStyle} bg-gray-700`}
+                title="Transaction Mode"
+                aria-describedby="transaction_mode-error"
+                value={transactionRow.transaction_mode}
+                onChange={setRow("transaction_mode")}
+            >
+                <option value="" disabled>Transaction Mode</option>
+                {transactionMode.map(t => (<option key={t} value={t}>
+                    {capsEveryWord(t)}
+                </option>))}
+            </select>
+            
+            {/* Categories Field */}
+            <FormErrorMessenger describedBy="category"
+                errorState={errorMessage}
+                colName="category"
+                styles={`${formErrMsgStyle}`}
+            />
+            
+            <select name="category"
+                title="Category"
+                className={`${formFieldStyle} bg-gray-700`}
+                aria-describedby="category-error"
+                value={transactionRow.category}
+                onChange={setRow("category")}
+            >
+                <option value="" disabled>Category</option>
+                {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                ))}
+            </select>
+
+            <div className="flex justify-between items-center pt-5">
+                <Link href={"/records"} className="hover:font-bold hover:text-[hsl(54,100%,50%)]" title="Back to records page">
+                    <strong>&larr;</strong> Records
+                </Link>
+                <button title="Save transaction" 
+                    className="text-xl"
+                    onClick={addToStaged}
+                >💾</button>
+            </div>
+
         </div>
     )
 }
@@ -247,4 +245,4 @@ function validate(data: InputRow): TransactionsActionState | Transaction {
     }
 
     return validated.data
-} 
+}
