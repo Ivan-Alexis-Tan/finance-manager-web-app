@@ -47,11 +47,12 @@ export function useManyTransactions() {
         stage,
         removeItem,
         removeAll,
+        defaultRow,
         setStates: {stage, setStage},
     }
 }
 
-function emptyRows(): InputRow {
+function defaultRow(): InputRow {
     return {
         trans_no: 0,
         date: new Date().toISOString().split("T")[0],
@@ -70,7 +71,7 @@ const errorDefault: TransactionsActionState = {
 
 export default function CreateManyTransactionForm({ categories = [], setStates }: CreateManyTransaction) {
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
-    const [transactionRow, setTransactionRow] = useState<InputRow>(emptyRows())
+    const [transactionRow, setTransactionRow] = useState<InputRow>(defaultRow())
     const [errorMessage, setErrorMessage] = useState<TransactionsActionState>(errorDefault)
 
     const setRow = (field: keyof NonNullable<transactionsCreateInput>) => (
