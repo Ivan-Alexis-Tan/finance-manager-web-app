@@ -4,48 +4,73 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model dummy_transactions {
-  trans_no         BigInt?
-  date             String? @db.Text
-  details          String? @db.Text
-  amount           BigInt?
-  transaction      String? @db.Text
-  transaction_mode String? @db.Text
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String?  @unique
+  image         String?
+  emailVerified DateTime
 
-  @@ignore
+  transactions Transactions[]
+  accounts     Account[]
+  sessions     Session[]
+
+  @@index([id])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model dummy_transactions_2 {
-  trans_no         BigInt?
-  date             String? @db.Text
-  details          String? @db.Text
-  amount           BigInt?
-  transaction      String? @db.Text
-  transaction_mode String? @db.Text
-
-  @@ignore
-}
-
-model transactions {
+model Transactions {
   trans_no         BigInt   @id @default(autoincrement())
-  date             DateTime @db.DateTime(0)
+  date             DateTime @db.Date
   details          String   @db.Text
   amount           Float
   transaction      String   @db.Text
   transaction_mode String   @db.Text
   category         String   @db.Text
+  quantity         Int      @default(1)
+  total            Decimal
+  user             User?    @relation(fields: [userId], references: [id])
+  userId           Int?
+
+  @@index([userId, trans_no])
 }
 
-model transactions_dummy {
-  trans_no         Int      @id @default(autoincrement())
-  date             DateTime @db.DateTime(0)
-  details          String   @db.Text
-  amount           Float
-  transaction      String   @db.Text
-  transaction_mode String   @db.Text
+model Account {
+  id Int @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider          String
+  providerAccountId String
+
+  type          String
+  access_token  String? @db.Text
+  refresh_token String? @db.Text
+  expires_at    Int?
+
+  token_type    String?
+  scope         String? @db.Text
+  id_token      String? @db.Text
+  session_state String?
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
