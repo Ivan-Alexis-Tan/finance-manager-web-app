@@ -7,16 +7,21 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String?  @unique
-  image         String?
-  emailVerified DateTime
+enum Role {
+  ADMIN
+  USER
+}
 
-  transactions Transactions[]
-  accounts     Account[]
-  sessions     Session[]
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String?        @unique
+  image         String?
+  emailVerified DateTime?
+  role          Role           @default(USER)
+  accounts      Account[]
+  sessions      Session[]
+  transactions  Transactions[]
 
   @@index([id])
 }
@@ -24,37 +29,33 @@ model User {
 model Transactions {
   trans_no         BigInt   @id @default(autoincrement())
   date             DateTime @db.Date
-  details          String   @db.Text
+  details          String
   amount           Float
-  transaction      String   @db.Text
-  transaction_mode String   @db.Text
-  category         String   @db.Text
+  transaction      String
+  transaction_mode String
+  category         String
   quantity         Int      @default(1)
   total            Decimal
-  user             User?    @relation(fields: [userId], references: [id])
   userId           Int?
+  user             User?    @relation(fields: [userId], references: [id])
 
   @@index([userId, trans_no])
 }
 
 model Account {
-  id Int @default(autoincrement())
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id                Int     @default(autoincrement())
+  userId            Int
   provider          String
   providerAccountId String
-
-  type          String
-  access_token  String? @db.Text
-  refresh_token String? @db.Text
-  expires_at    Int?
-
-  token_type    String?
-  scope         String? @db.Text
-  id_token      String? @db.Text
-  session_state String?
+  type              String
+  access_token      String?
+  refresh_token     String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -63,8 +64,8 @@ model Session {
   id           Int      @id @default(autoincrement())
   sessionToken String   @unique
   userId       Int
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
