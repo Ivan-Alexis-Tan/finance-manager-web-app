@@ -5,9 +5,10 @@ import { getCategories } from "@/src/actions/actions"
 import { amountOpKeys, dateOpKeys, transactionParamKeys } from "@/src/helpers/constants"
 import { filterAmount, filterDate } from "@/src/actions/filteringHelpers"
 
-import TransactionsTable from "./RecordsTable"
+import TransactionsTable from "./TransactionsTable"
 import TransactionPagination from "./TransactionPagination"
 import FilterSearchTransactions from "./FilterSearchTransaction"
+import { auth } from "@/auth"
 
 type TransactionParamKeys = Partial<Record<typeof transactionParamKeys[number], string>>
 
@@ -16,6 +17,7 @@ interface SearchParamsProps {
 }
 
 export default async function Page(props: SearchParamsProps) {
+    const session = await auth()
     const searchParams = await props.searchParams;
     const queries = transactionParamKeys.reduce((acc: TransactionParamKeys, field) => {
         const val = searchParams?.[field] || ""
@@ -43,11 +45,15 @@ export default async function Page(props: SearchParamsProps) {
     ]
 
     const data = await prisma.transactions.findMany({
-        where: (Object.keys(queries).length >= 1) ? { AND: filterConfigs } : undefined,
+        where: { 
+            userId: Number(session?.user.id),
+            AND: (Object.keys(queries).length >= 1) ? filterConfigs : undefined,
+        },
         orderBy: { date: "desc" },
         take: 20,
         skip: Number(currentPage) * 20 - 20,
     })
+    const serializedTransactions = data.map(row => ({...row, total: Number(row.total)}))
 
     const totalRows = await prisma.transactions.count({
         where: (Object.keys(queries).length >= 1) 
@@ -68,8 +74,10 @@ export default async function Page(props: SearchParamsProps) {
 
             <FilterSearchTransactions categories={categories} />
             
-            <TransactionsTable transactionData={data} />
-            <TransactionPagination totalRows={totalRows} />
+            <div className="mb-5">
+                <TransactionPagination totalRows={totalRows} />
+            </div>
+            <TransactionsTable transactionData={serializedTransactions as typeof serializedTransactions} />
         </div>
     )
 }
