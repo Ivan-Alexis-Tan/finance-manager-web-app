@@ -1,28 +1,62 @@
 "use client"
 
-import { useState } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 
 import type { AmountFormat, TransactionsActionState } from "@/src/types/types";
 import { transactionMode, transactions } from "@/src/helpers/constants";
 import { capsEveryWord } from "@/src/helpers/helperFn";
 
 import FormErrorMessenger from "./FormErrorMessenger";
+import Link from "next/link";
+import { createTransactions } from "@/src/actions/actions";
+import { evaluate } from "mathjs";
 
 const formFieldStyle = "mb-7"
 const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
 
 interface TransactionFormFields {
-    errState: TransactionsActionState
     categories: string[]
 }
 
-export default function TransactionFormFields({ errState, categories }: TransactionFormFields) {
+interface QuantitativeVals {
+    quantity: number
+    amount: number | string
+}
+
+const quantitativeVals: QuantitativeVals = {
+    quantity: 1,
+    amount: 0,
+}
+
+export default function TransactionFormFields({ categories }: TransactionFormFields) {
+    const [state, formAction] = useActionState(createTransactions, { message: null })
+    const [quantiVals, setQuantiVals] = useState<QuantitativeVals>(quantitativeVals)
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
+
+    const setTotal = (field: keyof QuantitativeVals) => (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => setQuantiVals(val => ({...val, [field]: e.target.value }))
+
+    const evaluatedAmount = typeof quantiVals.amount === "string"
+        ? (_ => {
+            try {
+                return evaluate(quantiVals.amount)
+            }
+            catch {
+                return 0;
+            }
+        })()
+        : quantiVals.amount
+
+    const total = (evaluatedAmount ?? 0) * (quantiVals.quantity ?? 0)
+
     return (
-        <div className="flex flex-col max-w-[20rem] w-full">
+        <form className="flex flex-col max-w-[20rem] w-full [&>input]:border-b [&>input]:mb-5"
+            action={formAction}
+        >
             {/* Date Field */}
             <FormErrorMessenger describedBy="date-error"
-                errorState={errState}
+                errorState={state}
                 colName="date"
                 styles={`${formErrMsgStyle}`}
             />
@@ -30,7 +64,7 @@ export default function TransactionFormFields({ errState, categories }: Transact
             <input type="date" 
                 name="date"
                 defaultValue={new Date().toISOString().split("T")[0]}
-                className={`${formFieldStyle} border-b-1`}
+                
                 title="Date"
                 // style={{ all: "revert" }}
                 aria-describedby="date-error"
@@ -38,7 +72,7 @@ export default function TransactionFormFields({ errState, categories }: Transact
             
             {/* Details Field */}
             <FormErrorMessenger describedBy="details-error"
-                errorState={errState}
+                errorState={state}
                 colName="details"
                 styles={`${formErrMsgStyle}`}
             />
@@ -48,12 +82,20 @@ export default function TransactionFormFields({ errState, categories }: Transact
                 placeholder="Details"
                 title="Details"
                 aria-describedby="details-error"
-                className={`${formFieldStyle} border-b-1`}
+            />
+
+            {/* Quantity Field */}
+            <input type="number" 
+                name="quantity"
+                title="Quantity"
+                placeholder="Quantity"
+                defaultValue={quantiVals.quantity}
+                onChange={setTotal("quantity")}
             />
 
             {/* Amount Field */}
             <FormErrorMessenger describedBy="amount-error"
-                errorState={errState}
+                errorState={state}
                 colName="amount"
                 styles={`${formErrMsgStyle}`}
             />
@@ -65,20 +107,27 @@ export default function TransactionFormFields({ errState, categories }: Transact
                         placeholder="Amount"
                         min={0}
                         title="Amount"
+                        onChange={setTotal("amount")}
                         aria-describedby="amount-error"
-                        className={`${formFieldStyle} border-b-1 w-full`}
+                        className={`${formFieldStyle} border-b w-full`}
                     />
                     : <input type="text" 
                         name="calc_amount"
                         placeholder="Calculate Amount"
-                        className={`${formFieldStyle} border-b-1 w-full`}
+                        onChange={(setTotal("amount"))}
+                        className={`${formFieldStyle} border-b w-full`}
                     />
                 }
+            </div>
+
+            <div className="flex gap-2 mb-5">
+                <input type="hidden" name="total" value={total} />
+                <span>Total:</span> <span className="flex-1 border-b">₱ {total}</span>
             </div>
             
             {/* Transaction Field */}
             <FormErrorMessenger describedBy="transaction-error"
-                errorState={errState}
+                errorState={state}
                 colName="transaction"
                 styles={`${formErrMsgStyle}`}
             />
@@ -97,7 +146,7 @@ export default function TransactionFormFields({ errState, categories }: Transact
             
             {/* Transaction Mode Field */}
             <FormErrorMessenger describedBy="transaction_mode"
-                errorState={errState}
+                errorState={state}
                 colName="transaction_mode"
                 styles={`${formErrMsgStyle}`}
             />
@@ -116,22 +165,32 @@ export default function TransactionFormFields({ errState, categories }: Transact
             
             {/* Categories Field */}
             <FormErrorMessenger describedBy="category"
-                errorState={errState}
+                errorState={state}
                 colName="category"
                 styles={`${formErrMsgStyle}`}
             />
-            
-            <select name="category"
+
+            <input type="text" 
+                list="categories"
+                name="category"
                 title="Category"
-                defaultValue=""
-                className={`${formFieldStyle} bg-gray-700`}
-                aria-describedby="category-error"
-            >
-                <option value="" disabled>Category</option>
+                placeholder="Category"
+            />
+
+            <datalist id="categories">
                 {categories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                 ))}
-            </select>
-        </div>
+            </datalist>
+
+            <div className="max-w-[20rem] w-full">
+                <div className="flex justify-between items-center mt-5">
+                    <Link href={"/records"} className="hover:font-bold hover:text-[hsl(54,100%,50%)]" title="Back to records page">
+                        <strong>&larr;</strong> Records
+                    </Link>
+                    <button title="Save transaction" className="text-xl">💾</button>
+                </div>
+            </div>
+        </form>
     )
 }

@@ -1,23 +1,18 @@
 "use client"
 
-import { useActionState, useEffect, useState } from "react"
-import Link from "next/link"
+import { useEffect, useState } from "react"
 
-import { createManyTransactions, createTransactions } from "@/src/actions/actions"
-import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn"
-
-import TransactionFormFields from "./TransactionFormFields"
 import CreateManyTransactionForm, { useManyTransactions } from "./CreateManyTransactionForm"
+import StagedTransactions from "./StagedTransactions"
+import TransactionFormFields from "./TransactionFormFields"
 
 interface CreateTransactionCategories {
     categories: string[]
 }
 
 const activeModeStyle = "text-[hsl(0,0%,0%)] bg-[hsl(0,0%,100%)] font-bold"
-const tdStyles = "p-[3px] max-w-[10rem]"
 
 export default function CreateTransactionForm({ categories = [] }: CreateTransactionCategories) {
-    const [state, formAction] = useActionState(createTransactions, { message: null })
     const [createMany, setCreateMany] = useState(false)  
     const { 
         stage, 
@@ -50,21 +45,9 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
             
             {/* Creation Form and Table */}
             {!createMany 
-                ? <form action={formAction}
-                    className="flex flex-col items-center"
-                >
-                    <TransactionFormFields errState={state} categories={categories} />
-                    
-                    <div className="max-w-[20rem] w-full">
-                        <div className="flex justify-between items-center mt-5">
-                            <Link href={"/records"} className="hover:font-bold hover:text-[hsl(54,100%,50%)]" title="Back to records page">
-                                <strong>&larr;</strong> Records
-                            </Link>
-                            <button title="Save transaction" className="text-xl">💾</button>
-                        </div>
-                    </div>
-
-                </form>
+                ? <div className="flex flex-col items-center">
+                    <TransactionFormFields categories={categories} />
+                </div>
                 : <div className="flex justify-center flex-wrap gap-6 w-full">
 
                     {/* Staged Transactions */}
