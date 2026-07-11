@@ -7,7 +7,8 @@ import { evaluate } from "mathjs"
 import { prisma } from "../lib/prisma"
 import { schemaTransactionsFormData } from "../schemas/schemas"
 import { TransactionsActionState } from "../types/types"
-import { transactionsCreateInput } from "../generated/prisma/models"
+import { TransactionsCreateInput } from "../generated/prisma/models"
+import { auth } from "@/auth"
 
 export async function createTransactions(
     prevState: TransactionsActionState, 
@@ -16,7 +17,9 @@ export async function createTransactions(
     const validatedFields = schemaTransactionsFormData.safeParse({
         date: new Date(formData.get("date") as string),
         details: formData.get("details"),
+        quantity: formData.get("quantity"),
         amount: formData.get("amount") || evaluate(formData.get("calc_amount") as string),
+        total: formData.get("total"),
         transaction: formData.get("transaction"),
         transaction_mode: formData.get("transaction_mode"),
         category: formData.get("category"),
@@ -26,20 +29,25 @@ export async function createTransactions(
         errors: validatedFields.error.flatten().fieldErrors, 
         message: "Invalid field values." 
     }
+    const session = await auth()
+    
+    if (!session?.user) return { message: "No authorized user."}
 
-    const { date, details, amount, transaction, transaction_mode, category } = validatedFields.data
+    const { date, details, quantity, amount, total, transaction, transaction_mode, category } = validatedFields.data
     try {
         await prisma.transactions.create({
             data: {
                 date: new Date(date),
                 details: details,
+                quantity: quantity,
                 amount: amount,
+                total: total,
                 transaction: transaction,
                 transaction_mode: transaction_mode,
                 category: category,
+                userId: Number(session?.user.id as string),
             },
         })
-
     }
     catch(err) {
         console.error(`ERROR: ${err}`)
@@ -125,7 +133,7 @@ export async function getCategories() {
     }, []).sort()
 }
 
-export async function createManyTransactions(transactionRows: transactionsCreateInput[]) {
+export async function createManyTransactions(transactionRows: TransactionsCreateInput[]) {
     const refinedRows = transactionRows.map(({trans_no, ...rest}) => rest)
     
     try {
