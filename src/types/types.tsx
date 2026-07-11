@@ -2,6 +2,11 @@ import { Transactions } from "../generated/prisma/client";
 import type { TransactionsCreateInput } from "../generated/prisma/models";
 import { amountFormat, transactionMode, transactions } from "../helpers/constants";
 
+export interface CalcTransactionTotal {
+    quantity: number
+    amount: number | string
+}
+
 export interface TransactionsActionState { 
     errors?: Partial<Record<keyof TransactionsType, string[] | undefined>>;
     message?: string | null; 

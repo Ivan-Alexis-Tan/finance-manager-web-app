@@ -2,7 +2,7 @@
 
 import React, { useActionState, useEffect, useState } from "react";
 
-import type { AmountFormat, TransactionsActionState } from "@/src/types/types";
+import type { AmountFormat, CalcTransactionTotal, TransactionsActionState } from "@/src/types/types";
 import { transactionMode, transactions } from "@/src/helpers/constants";
 import { capsEveryWord } from "@/src/helpers/helperFn";
 
@@ -18,22 +18,17 @@ interface TransactionFormFields {
     categories: string[]
 }
 
-interface QuantitativeVals {
-    quantity: number
-    amount: number | string
-}
-
-const quantitativeVals: QuantitativeVals = {
+const quantitativeVals: CalcTransactionTotal = {
     quantity: 1,
     amount: 0,
 }
 
 export default function TransactionFormFields({ categories }: TransactionFormFields) {
     const [state, formAction] = useActionState(createTransactions, { message: null })
-    const [quantiVals, setQuantiVals] = useState<QuantitativeVals>(quantitativeVals)
+    const [quantiVals, setQuantiVals] = useState<CalcTransactionTotal>(quantitativeVals)
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
 
-    const setTotal = (field: keyof QuantitativeVals) => (
+    const setTotal = (field: keyof CalcTransactionTotal) => (
         e: React.ChangeEvent<HTMLInputElement>
     ) => setQuantiVals(val => ({...val, [field]: e.target.value }))
 
