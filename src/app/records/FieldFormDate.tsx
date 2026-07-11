@@ -25,7 +25,7 @@ export default function FieldFormDate() {
             ? <input type="date" 
                 name="date"
                 defaultValue={today}
-                className="border-b-1 py-1"
+                className="border-b py-1"
             />
             : <div className="flex flex-col justify-end">
                 <div>
@@ -41,7 +41,7 @@ export default function FieldFormDate() {
                     <input type="date" 
                         name="date"
                         defaultValue={today}
-                        className="border-b-1"
+                        className="border-b"
                     />
                 </div>
             </div>

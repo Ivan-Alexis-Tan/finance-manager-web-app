@@ -7,11 +7,11 @@ import {
 } from "@/src/helpers/constants"
 import { capsEveryWord } from "@/src/helpers/helperFn"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 
 import React, { useState } from "react"
 import FieldFormDate from "./FieldFormDate"
 import FieldFormAmount from "./FieldFormAmount"
-import Link from "next/link"
 
 export default function FilterSearchTransactions({ categories = [] }: { categories: string[]}) {
     const searchParams = useSearchParams()
@@ -82,14 +82,14 @@ export default function FilterSearchTransactions({ categories = [] }: { categori
                     name="details"
                     placeholder="Details"
                     defaultValue={""}
-                    className="border-b-1 py-1"
+                    className="border-b py-1"
                 />
 
                 <FieldFormAmount />
 
                 <select name="transaction"
                     defaultValue={""}
-                    className="border-b-1 py-1"
+                    className="border-b py-1"
                 >
                     <option value="" disabled>Transaction</option>
                     <option value="">All</option>
@@ -100,7 +100,7 @@ export default function FilterSearchTransactions({ categories = [] }: { categori
 
                 <select name="transaction_mode"
                     defaultValue={""}
-                    className="border-b-1 border-white py-1"
+                    className="border-b border-white py-1"
                 >
                     <option value="">Transaction Mode</option>
                     <option value="">All</option>
@@ -111,7 +111,7 @@ export default function FilterSearchTransactions({ categories = [] }: { categori
 
                 <select name="category"
                     defaultValue={""}
-                    className="border-b-1 py-1"
+                    className="border-b py-1"
                 >
                     <option value="" disabled>Category</option>
                     <option value="">All</option>
