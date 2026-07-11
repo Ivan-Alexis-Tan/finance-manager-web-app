@@ -35,7 +35,9 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         
-        <NavBar session={session as NonNullable<typeof session>} />
+        <div className="sticky top-0 left-0">
+          <NavBar session={session as NonNullable<typeof session>} />
+        </div>
         
         <main className="flex-1 flex flex-col mx-5">
           <div className="flex-1 py-3 bg-zinc-50 font-sans dark:bg-black">
