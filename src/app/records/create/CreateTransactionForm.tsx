@@ -67,79 +67,17 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
                 </form>
                 : <div className="flex justify-center flex-wrap gap-6 w-full">
 
-                    {/* Staged UI */}
-                    {stage.length >= 1
-                        ? <div className="flex flex-col gap-2 max-w-4xl w-full">
-
-                            {/* Upload and Delete Transaction */}
-                            <div className="flex gap-10 items-center p-2">
-                                <button title="Upload items"
-                                    onClick={_ => {
-                                        const confirmed = window.confirm("Confirm upload items.")
-                                        if (!confirmed) return null
-                                        
-                                        createManyTransactions(stage)
-                                        removeAll()
-                                    }}
-                                >📨 Upload</button>
-
-                                <button title="Delete all items"
-                                    onClick={_ => {
-                                        const confirmed = window.confirm("Confirm delete all items.")
-                                        if (!confirmed) return null;
-                                        removeAll()
-                                    }}
-                                >🗑️ Delete all</button>
-                            </div>
-                            
-                            {/* Transaction Table */}
-                            <div className="w-full overflow-x-auto mb-3">
-                                <table className="min-w-[700px] w-full bg-gray-700 border-collapse mb-5">
-                                    <thead>
-                                        <tr className="border-b-[1px] border-b-gray-900 font-bold">
-                                            <td></td>
-                                            <td className={`${tdStyles}`}>Date</td>
-                                            <td className={`${tdStyles} max-w-[200px]`}>Details</td>
-                                            <td className={`${tdStyles}`}>Amount</td>
-                                            <td className={`${tdStyles}`}>Transaction</td>
-                                            <td className={`${tdStyles}`}>Transaction Mode</td>
-                                            <td className={`${tdStyles}`}>Category</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {stage.map(s => (
-                                            <tr key={s.trans_no}>
-                                                <td>
-                                                    <span title={`Delete ${s.details}`}
-                                                        onClick={_ => {
-                                                            const confirmed = window.confirm(`Confirm delete "${s.details}"`)
-                                                            if (!confirmed) return
-                                                            removeItem(s.trans_no as number)
-                                                        }}
-                                                    >🗑️</span>
-                                                </td>
-                                                <td className={`${tdStyles}`}>{dateFormatter(s.date as string)}</td>
-                                                <td className={`wrap-break-word ${tdStyles}`}>{s.details}</td>
-                                                <td className={`${tdStyles}`}>{s.amount}</td>
-                                                <td className={`${tdStyles}`}>{capsEveryWord(s.transaction)}</td>
-                                                <td className={`${tdStyles}`}>{capsEveryWord(s.transaction_mode)}</td>
-                                                <td className={`${tdStyles}`}>{capsEveryWord(s.category)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-                        : <div className="text-center">No transaction to be committed.</div>
-                    }                        
+                    {/* Staged Transactions */}
+                    <StagedTransactions 
+                        staged={stage}
+                        removeAll={removeAll}
+                        removeItem={removeItem}
+                    />
 
                     {/* Form Field */}
                     <CreateManyTransactionForm categories={categories} setStates={setStates} />
-                    
                 </div>
             }
-
         </div>
     )
 }
