@@ -112,7 +112,7 @@ export default function TransactionFormFields({ categories }: TransactionFormFie
                         className={`${formFieldStyle} border-b w-full`}
                     />
                     : <input type="text" 
-                        name="calc_amount"
+                        name="amount"
                         placeholder="Calculate Amount"
                         onChange={(setTotal("amount"))}
                         className={`${formFieldStyle} border-b w-full`}

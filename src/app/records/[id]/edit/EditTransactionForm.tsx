@@ -6,13 +6,13 @@ import { useActionState, useState } from "react";
 import { transactionMode, transactions } from "@/src/helpers/constants";
 import { capsEveryWord } from "@/src/helpers/helperFn";
 import { editTransaction } from "@/src/actions/actions";
-import { transactionsUncheckedCreateInput } from "@/src/generated/prisma/models";
+import { TransactionsUncheckedCreateInput } from "@/src/generated/prisma/models";
 import { AmountFormat } from "@/src/types/types";
 
 import FormErrorMessenger from "../../create/FormErrorMessenger";
 
 interface EditTransactionForm {
-    defaultVals: transactionsUncheckedCreateInput,
+    defaultVals: TransactionsUncheckedCreateInput,
     categories: string[]
 }
 
@@ -39,7 +39,7 @@ export default function EditTransactionForm({ defaultVals, categories = [] }: Ed
                     name="date"
                     defaultValue={(defaultVals.date as Date).toISOString().split("T")[0]}
                     aria-describedby="date-error"
-                    className={`${formFieldStyle} border-b-1`}
+                    className={`${formFieldStyle} border-b`}
                 />
 
                 {/* Details Field */}
@@ -53,13 +53,13 @@ export default function EditTransactionForm({ defaultVals, categories = [] }: Ed
                     placeholder="Details"
                     defaultValue={defaultVals.details as string}
                     aria-describedby="details-error"
-                    className={`${formFieldStyle} border-b-1`}
+                    className={`${formFieldStyle} border-b`}
                 />
 
                 {/* Amount Field */}
                 <FormErrorMessenger describedBy={amountFrmt === "constant" ? "amount-error" : "calc-amount-error"}
                     errorState={state}
-                    colName={amountFrmt === "constant" ? "amount" : "calc_amount"}
+                    colName={"amount"}
                     styles={`${formErrMsgStyle}`}
                 />
                 <div onDoubleClick={_ => setAmountFrmt(f => f === "constant" ? "calculate" : "constant")}>
@@ -72,14 +72,14 @@ export default function EditTransactionForm({ defaultVals, categories = [] }: Ed
                             placeholder="Amount"
                             defaultValue={`${defaultVals.amount as Number}`}
                             aria-describedby="amount-error"
-                            className={`${formFieldStyle} border-b-1`}
+                            className={`${formFieldStyle} border-b`}
                         />
                         : <input type="text" 
-                            name="calc_amount"
+                            name="amount"
                             placeholder="Amount"
                             defaultValue={`${defaultVals.amount as Number}`}
                             aria-describedby="calc-amount-error"
-                            className={`${formFieldStyle} border-b-1`}
+                            className={`${formFieldStyle} border-b`}
                         />
                     }
                 </div>

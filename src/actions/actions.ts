@@ -18,7 +18,7 @@ export async function createTransactions(
         date: new Date(formData.get("date") as string),
         details: formData.get("details"),
         quantity: formData.get("quantity"),
-        amount: formData.get("amount") || evaluate(formData.get("calc_amount") as string),
+        amount: evaluate(formData.get("amount") as string),
         total: formData.get("total"),
         transaction: formData.get("transaction"),
         transaction_mode: formData.get("transaction_mode"),
@@ -77,7 +77,7 @@ export async function editTransaction(
     const validatedFields = schemaTransactionsFormData.safeParse({
         date: new Date(formData.get("date") as string),
         details: formData.get("details"),
-        amount: formData.get("amount") || evaluate(formData.get("calc_amount") as string),
+        amount: evaluate(formData.get("amount") as string),
         transaction: formData.get("transaction"),
         transaction_mode: formData.get("transaction_mode"),
         category: formData.get("category"),
