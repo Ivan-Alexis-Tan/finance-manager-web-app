@@ -1,6 +1,9 @@
 import { prisma } from "@/src/lib/prisma"
-import { transactionsUncheckedCreateInput } from "@/src/generated/prisma/models"
+import { TransactionsGetPayload } from "@/src/generated/prisma/models"
 import { getCategories } from "@/src/actions/actions"
+
+import { serializedTransaction } from "@/src/helpers/helperFn"
+import { TransactionsType } from "@/src/types/types"
 
 import EditTransactionForm from "./EditTransactionForm"
 
@@ -10,6 +13,7 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
         where: { trans_no: Number(id) }
     })
 
+    const transaction = serializedTransaction(transactionData as TransactionsGetPayload<{}>)
     const categories = await getCategories()
 
     return (
@@ -19,7 +23,7 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
             </h1>
 
             <EditTransactionForm 
-                defaultVals={transactionData as transactionsUncheckedCreateInput} 
+                defaultVals={transaction as TransactionsType} 
                 categories={categories} 
             />
         </div>

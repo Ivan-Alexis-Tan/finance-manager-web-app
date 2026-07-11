@@ -10,6 +10,7 @@ import TransactionPagination from "./TransactionPagination"
 import FilterSearchTransactions from "./FilterSearchTransaction"
 import { auth } from "@/auth"
 import { TransactionsType } from "@/src/types/types"
+import { serializedTransactions } from "@/src/helpers/helperFn"
 
 type TransactionParamKeys = Partial<Record<typeof transactionParamKeys[number], string>>
 
@@ -54,7 +55,7 @@ export default async function Page(props: SearchParamsProps) {
         take: 20,
         skip: Number(currentPage) * 20 - 20,
     })
-    const serializedTransactions = data.map(row => ({...row, trans_no: Number(row.trans_no), total: Number(row.total)}))
+    const transactionsData = serializedTransactions(data)
 
     const totalRows = await prisma.transactions.count({
         where: (Object.keys(queries).length >= 1) 
@@ -78,7 +79,7 @@ export default async function Page(props: SearchParamsProps) {
             <div className="mb-5">
                 <TransactionPagination totalRows={totalRows} />
             </div>
-            <TransactionsTable transactionData={serializedTransactions as TransactionsType[]} />
+            <TransactionsTable transactionData={transactionsData as TransactionsType[]} />
         </div>
     )
 }
