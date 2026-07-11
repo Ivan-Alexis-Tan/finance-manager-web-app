@@ -77,7 +77,9 @@ export async function editTransaction(
     const validatedFields = schemaTransactionsFormData.safeParse({
         date: new Date(formData.get("date") as string),
         details: formData.get("details"),
+        quantity: formData.get("quantity"),
         amount: evaluate(formData.get("amount") as string),
+        total: formData.get("total"),
         transaction: formData.get("transaction"),
         transaction_mode: formData.get("transaction_mode"),
         category: formData.get("category"),
@@ -88,14 +90,16 @@ export async function editTransaction(
         message: "Invalid field values."
     }
     
-    const { date, details, amount, transaction, transaction_mode, category} = validatedFields.data
+    const { date, details, quantity, amount, total, transaction, transaction_mode, category} = validatedFields.data
     try {
         await prisma.transactions.upsert({
             where: { trans_no: id },
             update: {
                 date: new Date(date),
                 details: details,
+                quantity: quantity,
                 amount: amount,
+                total: total,
                 transaction: transaction,
                 transaction_mode: transaction_mode,
                 category: category,
@@ -103,7 +107,9 @@ export async function editTransaction(
             create: {
                 date: new Date(date),
                 details: details,
+                quantity: quantity,
                 amount: amount,
+                total: total,
                 transaction: transaction,
                 transaction_mode: transaction_mode,
                 category: category,
