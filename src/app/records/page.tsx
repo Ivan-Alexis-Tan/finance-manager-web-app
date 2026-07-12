@@ -70,10 +70,16 @@ export default async function Page(props: SearchParamsProps) {
         <div>
             <h1 className="text-center text-4xl font-bold">Records</h1>
             
-            <Link href="/records/create" className="flex justify-center items-center m-5 gap-2">
+            <Link href="/records/create" 
+                className="flex justify-center items-center m-5 gap-2"
+            >
                 <span className="bg-white rounded-full p-1">
                     ➕
-                </span> New Transaction
+                </span> <span
+                    className="hover:text-(--accent-clr)"
+                >
+                    New Transaction
+                </span>
             </Link>
 
             <FilterSearchTransactions categories={categories} />

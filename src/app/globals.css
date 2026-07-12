@@ -6,6 +6,9 @@
 
   --fg-tint-clr: hsl(0, 0%, 25%);
   --accent-clr: hsl(160, 100%, 50%);
+
+  --z-base: 0;
+  --z-confirmationWindow: 400;
 }
 
 @theme inline {
@@ -41,5 +44,21 @@ select option {
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
+}
+
+.popup-window {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-color: hsla(0,0%,100%,0.4);
 }
 
