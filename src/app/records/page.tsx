@@ -11,6 +11,7 @@ import FilterSearchTransactions from "./FilterSearchTransaction"
 import { auth } from "@/auth"
 import { TransactionsType } from "@/src/types/types"
 import { serializedTransactions } from "@/src/helpers/helperFn"
+import { Session } from "next-auth"
 
 type TransactionParamKeys = Partial<Record<typeof transactionParamKeys[number], string>>
 
@@ -48,7 +49,7 @@ export default async function Page(props: SearchParamsProps) {
 
     const data = await prisma.transactions.findMany({
         where: { 
-            userId: Number(session?.user.id),
+            userId: Number(session?.user.id as Session["user"]["id"]),
             AND: (Object.keys(queries).length >= 1) ? filterConfigs : undefined,
         },
         orderBy: { date: "desc" },
