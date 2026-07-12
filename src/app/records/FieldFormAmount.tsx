@@ -1,7 +1,8 @@
 "use client"
 
-import { amountOpKeys } from "@/src/helpers/constants";
 import { useState } from "react";
+
+import { amountOpKeys } from "@/src/helpers/constants";
 
 type AmountOpKeys = typeof amountOpKeys[number]
 

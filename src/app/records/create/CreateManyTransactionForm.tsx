@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
-import { AmountFormat, Transaction, TransactionErrorsStates, TransactionsActionState, TransactionsType } from "@/src/types/types"
+import { AmountFormat, TransactionErrorsStates, TransactionsActionState, TransactionsType } from "@/src/types/types"
+
 import { transactionMode, transactions } from "@/src/helpers/constants"
 import { capsEveryWord } from "@/src/helpers/helperFn"
-import { TransactionsCreateInput, TransactionsGetPayload } from "@/src/generated/prisma/models"
+import { TransactionsCreateInput } from "@/src/generated/prisma/models"
 import { schemaTransactionsFormData } from "@/src/schemas/schemas"
 
 import FormErrorMessenger from "./FormErrorMessenger"

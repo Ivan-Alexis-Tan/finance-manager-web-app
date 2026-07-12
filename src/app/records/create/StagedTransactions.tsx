@@ -1,7 +1,8 @@
 "use client"
 
-import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn"
 import { TransactionsType } from "@/src/types/types"
+
+import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn"
 
 interface StagedTransactions {
     staged: Omit<NonNullable<TransactionsType>, "userId">[]
