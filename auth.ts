@@ -20,7 +20,8 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         ...authCofigs.callbacks,
 
         session({ session, user }) {
-            // console.log(`user (root/auth.ts) =`, user)
+            session.user.role = user.role
+
             return session
         },
     }
