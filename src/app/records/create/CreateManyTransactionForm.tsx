@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 
 import { AmountFormat, TransactionErrorsStates, TransactionsActionState, TransactionsType } from "@/src/types/types"
+import { Session } from "next-auth"
 
 import { transactionMode, transactions } from "@/src/helpers/constants"
 import { capsEveryWord } from "@/src/helpers/helperFn"
@@ -11,64 +12,27 @@ import { TransactionsCreateInput } from "@/src/generated/prisma/models"
 import { schemaTransactionsFormData } from "@/src/schemas/schemas"
 
 import FormErrorMessenger from "./FormErrorMessenger"
+import { defaultRow } from "./useManyTransactions"
 
-type TransactionRow = TransactionsType[]
+type Transactions = TransactionsType[]
+
 interface CreateManyTransaction { 
     categories: string[]
+    user: Session["user"]
     setStates: {
-        setStage: React.Dispatch<React.SetStateAction<TransactionRow>>
-        stage: TransactionRow
+        setStage: React.Dispatch<React.SetStateAction<Transactions>>
+        stage: Transactions
     }
 }
 
 const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
-
-export function useManyTransactions() {
-    const [stage, setStage] = useState<TransactionRow>(() => {
-        if (typeof window === "undefined") return []
-        const saved = localStorage.getItem("staged_transactions") as string
-        return saved ? JSON.parse(saved) : []
-    })
-
-    useEffect(() => {
-        localStorage.setItem("staged_transactions", JSON.stringify(stage))
-    }, [stage])
-
-    function removeItem(trans_no: number) {
-        setStage(p => p.filter(item => item.trans_no !== trans_no))
-    }
-
-    function removeAll() {
-        setStage([])
-    }
-
-    return {
-        stage,
-        removeItem,
-        removeAll,
-        defaultRow,
-        setStates: {stage, setStage},
-    }
-}
-
-const defaultRow: TransactionsCreateInput = {
-    trans_no: 0,
-    date: new Date().toISOString().split("T")[0],
-    details: "",
-    quantity: 1,
-    amount: 0,
-    total: 0,
-    transaction: "",
-    transaction_mode: "",
-    category: "",
-}
 
 const errorDefault: TransactionsActionState = {
     errors: {},
     message: "",
 }
 
-export default function CreateManyTransactionForm({ categories = [], setStates }: CreateManyTransaction) {
+export default function CreateManyTransactionForm({ categories = [], setStates, user }: CreateManyTransaction) {
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
     const [transactionRow, setTransactionRow] = useState<TransactionsCreateInput>(defaultRow)
     const [errorMessage, setErrorMessage] = useState<TransactionsActionState>(errorDefault)
@@ -88,7 +52,7 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
         setErrorMessage(errorDefault)
 
         const id = setStates.stage.reduce((acc: number, s) => Math.max(Number(s.trans_no), acc) + 1, 1)
-        setStates.setStage(p => ([...p, {...data as TransactionsType, trans_no: id }]))
+        setStates.setStage(p => ([...p, {...data as TransactionsType, trans_no: id, userId: Number(user.id as string) }]))
     }
 
     useEffect(() => {
@@ -108,7 +72,7 @@ export default function CreateManyTransactionForm({ categories = [], setStates }
 
             <input type="date" 
                 name="date"
-                value={`${transactionRow.date}`}
+                value={`${(transactionRow.date as Date).toISOString().split("T")[0]}`}
                 title="Date"
                 // style={{ all: "revert" }}
                 aria-describedby="date-error"

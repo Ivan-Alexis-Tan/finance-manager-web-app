@@ -2,24 +2,29 @@
 
 import { useEffect, useState } from "react"
 
-import CreateManyTransactionForm, { useManyTransactions } from "./CreateManyTransactionForm"
+import { Session } from "next-auth"
+
+import { useManyTransactions } from "./useManyTransactions"
+
+import CreateManyTransactionForm from "./CreateManyTransactionForm"
 import StagedTransactions from "./StagedTransactions"
 import TransactionFormFields from "./TransactionFormFields"
 
 interface CreateTransactionCategories {
     categories: string[]
+    user: Session["user"]
 }
 
 const activeModeStyle = "text-[hsl(0,0%,0%)] bg-[hsl(0,0%,100%)] font-bold"
 
-export default function CreateTransactionForm({ categories = [] }: CreateTransactionCategories) {
+export default function CreateTransactionForm({ categories = [], user }: CreateTransactionCategories) {
     const [createMany, setCreateMany] = useState(false)  
     const { 
         stage, 
         removeItem, 
         removeAll,
         setStates 
-    } = useManyTransactions()
+    } = useManyTransactions(user)
 
     useEffect(() => {
         const draft = localStorage.getItem("staged_transactions")
@@ -48,7 +53,7 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
                 ? <div className="flex flex-col items-center">
                     <TransactionFormFields categories={categories} />
                 </div>
-                : <div className="flex justify-center flex-wrap gap-6 w-full">
+                : <div className="flex justify-evenly flex-wrap gap-6 w-full">
 
                     {/* Staged Transactions */}
                     <StagedTransactions 
@@ -58,7 +63,7 @@ export default function CreateTransactionForm({ categories = [] }: CreateTransac
                     />
 
                     {/* Form Field */}
-                    <CreateManyTransactionForm categories={categories} setStates={setStates} />
+                    <CreateManyTransactionForm categories={categories} setStates={setStates} user={user} />
                 </div>
             }
         </div>
