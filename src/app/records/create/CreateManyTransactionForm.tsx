@@ -72,7 +72,7 @@ export default function CreateManyTransactionForm({ categories = [], setStates, 
 
             <input type="date" 
                 name="date"
-                value={`${(transactionRow.date as Date).toISOString().split("T")[0]}`}
+                value={`${transactionRow.date}`}
                 title="Date"
                 // style={{ all: "revert" }}
                 aria-describedby="date-error"

@@ -4,9 +4,11 @@ import { TransactionsType } from "@/src/types/types"
 import { Session } from "next-auth"
 import { useEffect, useState } from "react"
 
-export const defaultRow: TransactionsType = {
+type DefaultTransactionRow = Omit<TransactionsType, "date"> & { date: string }
+
+export const defaultRow: DefaultTransactionRow = {
     trans_no: 0,
-    date: new Date(),
+    date: new Date().toISOString().split("T")[0],
     details: "",
     quantity: 1,
     amount: 0,
