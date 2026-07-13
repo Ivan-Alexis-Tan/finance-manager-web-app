@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn";
 import { deleteTransaction } from "@/src/actions/actions";
 import { TransactionsType } from "@/src/types/types";
+import { PopupWindow, usePopupWindow } from "../components/PopupWindows";
 
 type TransactionTable = { transactionData: TransactionsType[] }
 
@@ -20,21 +21,25 @@ const DelWindowDefault: DelWindowState = {
 }
 
 export default function TransactionsTable({ transactionData = [] }: TransactionTable ) {
-    const [delWindow, setDelWindow] = useState<DelWindowState>(DelWindowDefault)
+    const [showPopup, setShowPopup] = useState<Boolean>(false)
+
+    const { popupStates, setPopupWindow } = usePopupWindow({
+        header: "Confirm Delete",
+        details: "",
+        confirmText: "Delete",
+        onConfirm() {},
+        onCancel() { setShowPopup(false) },
+    });
 
     return (
         transactionData.length >= 1
             ? <div className="flex justify-center mb-5">
+
+                {showPopup
+                    && <PopupWindow popupStates={popupStates} />
+                }
+
                 <div className="max-w-300 overflow-x-auto px-5 pb-2 bg-gray-700 rounded border-collapse">
-                    
-                    {delWindow.show
-                        && <ConfmDelWindow 
-                            itemName={delWindow.itemName} 
-                            itemId={delWindow.itemId}
-                            setDelWindow={setDelWindow}
-                        />
-                    }
-                    
                     <table className="w-full min-w-md [&_td]:p-1">
                         <thead>
                             <tr className="border-b border-b-gray-900 font-bold">
@@ -50,7 +55,7 @@ export default function TransactionsTable({ transactionData = [] }: TransactionT
                             </tr>
                         </thead>
                         <tbody>
-                            {transactionData.map((data, idx) => (
+                            {transactionData.map(data => (
                                 <tr key={data.trans_no}>
                                     <td>
                                         <div className="flex gap-1">
@@ -61,12 +66,16 @@ export default function TransactionsTable({ transactionData = [] }: TransactionT
                                             </Link>
                                             <button title="Delete"
                                                 onClick={_ => {
-                                                    setDelWindow({
-                                                        show: true,
-                                                        itemId: data.trans_no as number,
-                                                        itemName: data.details
-                                                    })}
-                                                }
+                                                    setShowPopup(true)
+                                                    setPopupWindow(p => ({
+                                                        ...p,
+                                                        details: <>You trying to delete "<i>{data.details}</i>"</>,
+                                                        onConfirm() {
+                                                            deleteTransaction(data.trans_no as number)
+                                                            setShowPopup(false)
+                                                        }
+                                                    }))
+                                                }}
                                             >🗑️</button>
                                         </div>
                                     </td>
@@ -85,43 +94,5 @@ export default function TransactionsTable({ transactionData = [] }: TransactionT
                 </div>
             </div>
             : <div>No transaction to show</div>
-    )
-}
-
-type ConfmDelWindow = {
-    itemId: number
-    itemName: string
-    setDelWindow: Dispatch<SetStateAction<DelWindowState>>
-}
-
-const ConfmDelWindow = ({ itemName, itemId, setDelWindow }: ConfmDelWindow) => {
-    return (
-        <div className="popup-window">
-            <div className="flex flex-col justify-evenly items-center 
-                            w-90 h-80 rounded-2xl bg-black">
-                <div className="flex flex-col items-center">
-                    <h2 className="text-2xl font-bold mb-5">Confirm Delete?</h2>
-                    <p>You try to delete "<i>{itemName}</i>"</p>
-                </div>
-
-                <div className="flex justify-between w-50
-                                [&>span]:p-2 [&>span]:rounded-2xl [&>span]:border"
-                >
-                    <span className="hover:bg-red-500"
-                        onClick={_ => {
-                            deleteTransaction(itemId)
-                            setDelWindow(DelWindowDefault)
-                        }}
-                    >
-                        Delete
-                    </span>
-                    <span className="hover:bg-white hover:text-black"
-                        onClick={_ => setDelWindow(DelWindowDefault)}
-                    >
-                        Cancel
-                    </span>
-                </div>
-            </div>
-        </div>
     )
 }

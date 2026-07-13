@@ -1,8 +1,13 @@
 "use client"
 
+import { useState } from "react"
+
 import { TransactionsType } from "@/src/types/types"
 
 import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn"
+import { createManyTransactions } from "@/src/actions/actions"
+
+import { PopupStatesType, PopupWindow, usePopupWindow } from "../../components/PopupWindows"
 
 interface StagedTransactions {
     staged: Omit<NonNullable<TransactionsType>, "userId">[]
@@ -10,29 +15,60 @@ interface StagedTransactions {
     removeAll: () => void
 }
 
+const popupStateDefault: PopupStatesType = {
+    header: "",
+    details: "",
+    onConfirm: () => {return},
+    onCancel: () => {return},
+}
+
 export default function StagedTransactions({ staged, removeItem, removeAll }: StagedTransactions) {
+    const [showPopUp, setShowPopup] = useState(false)
+    const { popupStates, setPopupWindow } = usePopupWindow(popupStateDefault)
+
     return (
-        // {/* Staged UI */}
+        // Staged UI
         (staged.length >= 1)
             ? <div className="flex flex-col gap-2 max-w-4xl w-full">
+                { showPopUp && <PopupWindow popupStates={popupStates} /> }
 
                 {/* Upload and Delete Transaction */}
-                <div className="flex gap-10 items-center p-2">
+                <div className="flex gap-10 items-center p-2 [&>button]:hover:text-(--accent-clr)">
                     <button title="Upload items"
                         onClick={_ => {
-                            const confirmed = window.confirm("Confirm upload items.")
-                            if (!confirmed) return null
-                            
-                            // createManyTransactions(staged)
-                            removeAll()
+                            setShowPopup(true)
+                            setPopupWindow({
+                                header: "Upload All Entries?",
+                                details: "You about to upload all staged entries.",
+                                confirmHover: "confirm",
+                                onConfirm() {
+                                    createManyTransactions(staged)
+                                    removeAll()
+                                    setShowPopup(false)
+                                },
+                                onCancel() {
+                                    setShowPopup(false)
+                                },
+                            })
                         }}
                     >📨 Upload</button>
 
                     <button title="Delete all items"
                         onClick={_ => {
-                            const confirmed = window.confirm("Confirm delete all items.")
-                            if (!confirmed) return null;
-                            removeAll()
+                            setShowPopup(true)
+                            setPopupWindow({
+                                header: "Delete All Entries?",
+                                details: "You about to delete all staged entries.",
+                                confirmText: "Delete",
+                                confirmHover: "warning",
+                                onConfirm() {
+                                    removeAll()
+                                    setShowPopup(false)
+                                },
+                                onCancel() {
+                                    setShowPopup(false)
+                                },
+                            })
                         }}
                     >🗑️ Delete all</button>
                 </div>
@@ -59,9 +95,19 @@ export default function StagedTransactions({ staged, removeItem, removeAll }: St
                                     <td>
                                         <span title={`Delete ${s.details}`}
                                             onClick={_ => {
-                                                const confirmed = window.confirm(`Confirm delete "${s.details}"`)
-                                                if (!confirmed) return
-                                                removeItem(s.trans_no as number)
+                                                setShowPopup(true)
+                                                setPopupWindow({
+                                                    header: "Confirm Delete",
+                                                    details: <>You about to delete "<i>{s.details}</i>"</>,
+                                                    confirmText: "Delete",
+                                                    onConfirm() {
+                                                        removeItem(s.trans_no as number)
+                                                        setShowPopup(false)
+                                                    },
+                                                    onCancel() {
+                                                        setShowPopup(false)
+                                                    },
+                                                })
                                             }}
                                         >🗑️</span>
                                     </td>

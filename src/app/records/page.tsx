@@ -75,9 +75,8 @@ export default async function Page(props: SearchParamsProps) {
             >
                 <span className="bg-white rounded-full p-1">
                     ➕
-                </span> <span
-                    className="hover:text-(--accent-clr)"
-                >
+                </span>
+                <span className="hover:text-(--accent-clr)">
                     New Transaction
                 </span>
             </Link>
@@ -87,6 +86,7 @@ export default async function Page(props: SearchParamsProps) {
             <div className="mb-5">
                 <TransactionPagination totalRows={totalRows} />
             </div>
+
             <TransactionsTable transactionData={transactionsData as TransactionsType[]} />
         </div>
     )
