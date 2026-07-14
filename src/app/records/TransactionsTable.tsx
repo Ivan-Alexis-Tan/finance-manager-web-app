@@ -1,10 +1,11 @@
 "use client"
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
+
+import { TransactionsType } from "@/src/types/types";
 
 import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn";
 import { deleteTransaction } from "@/src/actions/actions";
-import { TransactionsType } from "@/src/types/types";
 import { PopupWindow, usePopupWindow } from "@/src/components/PopupWindows";
 
 type TransactionTable = { transactionData: TransactionsType[] }

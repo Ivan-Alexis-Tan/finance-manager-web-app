@@ -4,16 +4,16 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { evaluate } from "mathjs";
 
+import { AmountFormat, CalcTransactionTotal, TransactionsType } from "@/src/types/types";
+
 import { transactionMode, transactions } from "@/src/helpers/constants";
 import { capsEveryWord } from "@/src/helpers/helperFn";
 import { editTransaction } from "@/src/actions/actions";
-import { TransactionsUncheckedCreateInput } from "@/src/generated/prisma/models";
-import { AmountFormat, CalcTransactionTotal } from "@/src/types/types";
 
 import FormErrorMessenger from "../../create/FormErrorMessenger";
 
 interface EditTransactionForm {
-    defaultVals: TransactionsUncheckedCreateInput,
+    defaultVals: TransactionsType,
     categories: string[]
 }
 
