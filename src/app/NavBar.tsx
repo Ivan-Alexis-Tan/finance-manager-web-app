@@ -37,9 +37,12 @@ export default function NavBar({ session }: NavBar) {
 
             <div>
                 {session?.user?.id
-                    && <span onClick={_ => setLogoutWindow(true)}
-                        className="hover:text-(--accent-clr)"
-                    >Logout</span>
+                    && <div className="flex justify-between w-50 *:hover:text-(--accent-clr)">
+                        <Link href={"user"}>{session.user.name}</Link>
+                        
+                        <span onClick={_ => setLogoutWindow(true)}
+                        >Logout</span>
+                    </div>
                 }
             </div>
         </nav>

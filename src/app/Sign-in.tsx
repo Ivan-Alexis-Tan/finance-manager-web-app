@@ -9,8 +9,8 @@ export default function Signin() {
         >
             <h2 className="text-2xl font-bold">Continue with:</h2>
 
-            <div className="flex justify-center gap-10
-                            [&>button]:flex [&>button]:gap-3 [&>button]:items-center [&>button]:p-2
+            <div className="flex flex-wrap justify-center gap-5
+                            [&>button]:flex [&>button]:flex-wrap [&>button]:justify-center [&>button]:gap-3 [&>button]:items-center [&>button]:p-2
                             [&>button]:hover:bg-(--accent-clr)
                             [&>button]:rounded-xl [&>button]:bg-foreground [&>button]:text-background"
             >
