@@ -43,6 +43,7 @@ export function useManyTransactions(user: Session["user"]) {
         
         if (!stored) {
             localStorage.setItem("staged_transactions", JSON.stringify(stage))
+            setDelAll(false)
             return
         }
 
@@ -53,6 +54,7 @@ export function useManyTransactions(user: Session["user"]) {
         }, [])
 
         localStorage.setItem("staged_transactions", JSON.stringify([...notOwnedRows, ...stage]))
+        setDelAll(false)
     }, [stage])
 
     function removeItem(trans_no: number) {
