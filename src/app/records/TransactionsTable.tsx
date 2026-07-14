@@ -5,20 +5,9 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn";
 import { deleteTransaction } from "@/src/actions/actions";
 import { TransactionsType } from "@/src/types/types";
-import { PopupWindow, usePopupWindow } from "../components/PopupWindows";
+import { PopupWindow, usePopupWindow } from "@/src/components/PopupWindows";
 
 type TransactionTable = { transactionData: TransactionsType[] }
-
-type DelWindowState = {
-    show: boolean
-    itemId: number
-    itemName: string
-}
-const DelWindowDefault: DelWindowState = {
-    show: false,
-    itemId: 0,
-    itemName: ""
-}
 
 export default function TransactionsTable({ transactionData = [] }: TransactionTable ) {
     const [showPopup, setShowPopup] = useState<Boolean>(false)

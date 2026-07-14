@@ -5,7 +5,7 @@ import { Session } from "next-auth";
 import { useState } from "react";
 
 import { logout } from "../actions/auth";
-import { PopupWindow, usePopupWindow } from "./components/PopupWindows";
+import { PopupWindow, usePopupWindow } from "../components/PopupWindows";
 
 interface NavBar {
     session: Session

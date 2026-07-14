@@ -7,7 +7,7 @@ import { TransactionsType } from "@/src/types/types"
 import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn"
 import { createManyTransactions } from "@/src/actions/actions"
 
-import { PopupStatesType, PopupWindow, usePopupWindow } from "../../components/PopupWindows"
+import { PopupStatesType, PopupWindow, usePopupWindow } from "@/src/components/PopupWindows"
 
 interface StagedTransactions {
     staged: Omit<NonNullable<TransactionsType>, "userId">[]
