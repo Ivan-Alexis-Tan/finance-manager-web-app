@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Finance Manager
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4)
+![Prisma](https://img.shields.io/badge/Prisma-7-2D3748)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1)
+![Auth.js](https://img.shields.io/badge/Auth.js-v5-000000)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-First, run the development server:
+A full-stack web application for recording and managing personal financial transactions. The application allows users to securely sign in, record income and expense transactions individually or in bulk, and efficiently search and organize financial records.
+
+> **Live Demo:** https://finance-manager-web-app-puce.vercel.app
+
+## Features
+
+- Secure authentication with Google and GitHub (OAuth)
+- Record income and expense transactions
+- Create multiple transactions in a single submission (bulk entry)
+- Edit and delete existing transactions
+- Search transactions
+- Filter transactions
+- Pagination
+- Responsive UI
+- Server-side validation with Zod
+
+## Tech Stack
+
+### Frontend
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+
+### Backend
+- Next.js Server Actions
+- Route Handlers
+- Auth.js
+- Prisma ORM
+- Zod
+
+### Database
+- PostgreSQL
+
+### Deployment
+- Vercel
+
+## Motivation
+
+This project was built both as a portfolio project and as a personal finance tracker. It provides a secure place to record daily financial transactions while serving as a foundation for future data analysis and visualization projects.
+
+## What I Learned
+
+- Building a full-stack application with Next.js
+- Authentication using Auth.js
+- PostgreSQL with Prisma ORM
+- Server-side validation using Zod
+- Structuring a larger application
+- Debugging deployment and authentication issues
+- Reading official documentation and solving implementation problems independently
+
+## Future Improvements
+
+- Dashboard
+- Charts and graphs
+- Budget planning
+- Savings tracking
+- Category analytics
+- CSV/Excel export
+- Recurring transactions
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+git clone https://github.com/Ivan-Alexis-Tan/finance-manager-web-app
+cd finance-manager
+pnpm install
+pnpm prisma generate
+pnpm prisma migrate deploy
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+DATABASE_URL=
+AUTH_SECRET=
+AUTH_GITHUB_ID=
+AUTH_GITHUB_SECRET=
+AUTH_GOOGLE_ID=
+AUTH_GOOGLE_SECRET=
+```
