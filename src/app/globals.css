@@ -6,7 +6,9 @@
 
   --fg-tint-clr: hsl(0, 0%, 25%);
   --accent-clr: hsl(160, 100%, 50%);
+  
   --red-clr: hsl(0,100%,70%);
+  --gray-clr: hsl(217, 21%, 27%);
 
   --z-base: 0;
   --z-confirmationWindow: 400;
@@ -23,7 +25,9 @@
   :root {
     --background: hsl(0, 0%, 4%);
     --foreground: hsl(0, 0%, 93%);
+    
     --red-clr: hsl(0,100%,70%);
+    --gray-clr: hsl(217, 21%, 27%);
   }
 }
 
