@@ -19,12 +19,12 @@ export default async function EditTransactionPage({ params }: { params: Promise<
     const categories = await getCategories()
 
     return (
-        <div className="flex flex-col justify-center items-center border-2 rounded-2xl m-15 p-8">
-            <h1 className="text-4xl text-center font-bold mb-15">
+        <div className="mx-5 mt-5 p-8 border-2 rounded-2xl">
+            <h1 className="text-3xl sm:text-4xl text-center font-bold mb-5">
                 Edit Transaction
             </h1>
 
-            <EditTransactionForm 
+            <EditTransactionForm className="mx-auto"
                 defaultVals={transaction as TransactionsType} 
                 categories={categories} 
             />

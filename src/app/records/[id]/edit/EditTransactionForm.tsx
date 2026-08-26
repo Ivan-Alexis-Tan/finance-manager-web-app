@@ -15,11 +15,10 @@ import FormErrorMessenger from "../../create/FormErrorMessenger";
 interface EditTransactionForm {
     defaultVals: TransactionsType,
     categories: string[]
+    className?: string
 }
 
-const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
-
-export default function EditTransactionForm({ defaultVals, categories = [] }: EditTransactionForm) {
+export default function EditTransactionForm({ defaultVals, categories = [], className = "" }: EditTransactionForm) {
     const actionFn = editTransaction.bind(null, defaultVals.trans_no as number)
     const [state, formAction] = useActionState(actionFn, { message: "" })
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
@@ -48,138 +47,189 @@ export default function EditTransactionForm({ defaultVals, categories = [] }: Ed
     return (
         <div>
             <form action={formAction}
-                className="flex flex-col [&_input]:border-b [&_input]:mb-5 
-                        [&_select]:bg-gray-700 [&_select]:mb-5"
+                className={`${className ?? ""} max-w-150 w-full [&_div.form-err-msg]:text-(--red-clr) [&_input]:border-b 
+                        [&_select]:bg-(--gray-clr) [&_label]:font-bold`}
             >
-                {/* Date Field */}
-                <FormErrorMessenger describedBy="date-error"
-                    errorState={state}
-                    colName="date"
-                    styles={`${formErrMsgStyle}`}
-                />
-                <input type="date" 
-                    name="date"
-                    title="Date"
-                    defaultValue={(defaultVals.date as Date).toISOString().split("T")[0]}
-                    aria-describedby="date-error"
-                />
-
-                {/* Details Field */}
-                <FormErrorMessenger describedBy="details-error"
-                    errorState={state}
-                    colName="details"
-                    styles={`${formErrMsgStyle}`}
-                />
-                <input type="text" 
-                    name="details"
-                    title="Details"
-                    placeholder="Details"
-                    defaultValue={defaultVals.details as string}
-                    aria-describedby="details-error"
-                />
-                
-                {/* Quantity Field */}
-                <FormErrorMessenger describedBy="quantity-error"
-                    errorState={state}
-                    colName="quantity"
-                    styles={`${formErrMsgStyle}`}
-                />
-                <input type="number" 
-                    name="quantity"
-                    title="Quantity"
-                    placeholder="Quantity"
-                    value={calcTotal.quantity}
-                    onChange={setTotal("quantity")}
-                />
-
-                {/* Amount Field */}
-                <FormErrorMessenger describedBy={amountFrmt === "constant" ? "amount-error" : "calc-amount-error"}
-                    errorState={state}
-                    colName={"amount"}
-                    styles={`${formErrMsgStyle}`}
-                />
-                <div onDoubleClick={_ => setAmountFrmt(f => f === "constant" ? "calculate" : "constant")}>
-                    <p onClick={_ => setAmountFrmt(f => f === "constant" ? "calculate" : "constant")}>
-                        {capsEveryWord(amountFrmt)} amount:
-                    </p>
-                    {amountFrmt === "constant"
-                        ? <input type="number" 
-                            name="amount"
-                            title="Amount"
-                            placeholder="Amount"
-                            value={calcTotal.amount}
-                            onChange={setTotal("amount")}
-                            aria-describedby="amount-error"
+                <div className="*:mb-5 sm:[&_div.form-field]:gap-5 
+                                [&_div.form-field]:grid [&_div.form-field]:grid-cols-1 
+                                sm:[&_div.form-field]:grid-cols-[minmax(6rem,1fr)_minmax(6rem,2fr)]"
+                >
+                    {/* Date Field */}
+                    <div>
+                        <FormErrorMessenger describedBy="date-error"
+                            errorState={state}
+                            colName="date"
                         />
-                        : <input type="text" 
-                            name="amount"
-                            title="Amount"
-                            placeholder="Amount"
-                            value={calcTotal.amount}
-                            onChange={setTotal("amount")}
-                            aria-describedby="calc-amount-error"
+                        
+                        <div className="form-field">
+                            <label>Date</label>
+                            <input type="date" 
+                                name="date"
+                                title="Date"
+                                defaultValue={(defaultVals.date as Date).toISOString().split("T")[0]}
+                                aria-describedby="date-error"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Details Field */}
+                    <div>
+                        <FormErrorMessenger describedBy="details-error"
+                            errorState={state}
+                            colName="details"
                         />
-                    }
-                </div>
+                        
+                        <div className="form-field">
+                            <label>Details</label>
+                            <input type="text" 
+                                name="details"
+                                title="Details"
+                                placeholder="Details"
+                                defaultValue={defaultVals.details as string}
+                                aria-describedby="details-error"
+                            />
+                        </div>
+                    </div>
+                    
+                    {/* Quantity Field */}
+                    <div>
+                        <FormErrorMessenger describedBy="quantity-error"
+                            errorState={state}
+                            colName="quantity"
+                        />
+                        
+                        <div className="form-field">
+                            <label>Quantity</label>
+                            <input type="number" 
+                                name="quantity"
+                                title="Quantity"
+                                placeholder="Quantity"
+                                value={calcTotal.quantity}
+                                onChange={setTotal("quantity")}
+                            />
+                        </div>
+                    </div>
 
-                {/* Total Field */}
-                <input type="hidden" name="total" value={total} />
-                <div className="flex gap-2 mb-5">
-                    <span>Total:</span><span className="flex-1 border-b">₱ {total}</span>
-                </div>
+                    {/* Amount Field */}
+                    <div>
+                        <FormErrorMessenger describedBy={amountFrmt === "constant" ? "amount-error" : "calc-amount-error"}
+                            errorState={state}
+                            colName={"amount"}
+                        />
+                        
+                        <div className="form-field [&_input]:w-full">
+                            <label onClick={_ => setAmountFrmt(f => f === "constant" ? "calculate" : "constant")}>
+                                {capsEveryWord(amountFrmt)} Amount
+                            </label>
+                            <div onDoubleClick={_ => setAmountFrmt(f => f === "constant" ? "calculate" : "constant")}>
+                                
+                                {amountFrmt === "constant"
+                                    ? <input type="number" 
+                                        name="amount"
+                                        title="Amount"
+                                        placeholder="Amount"
+                                        value={calcTotal.amount}
+                                        onChange={setTotal("amount")}
+                                        aria-describedby="amount-error"
+                                    />
+                                    : <input type="text" 
+                                        name="amount"
+                                        title="Amount"
+                                        placeholder="Amount"
+                                        value={calcTotal.amount}
+                                        onChange={setTotal("amount")}
+                                        aria-describedby="calc-amount-error"
+                                    />
+                                }
+                            </div>
+                        </div>
+                    </div>
 
-                {/* Transaction Field */}
-                <FormErrorMessenger describedBy="transaction-error"
-                    errorState={state}
-                    colName="transaction"
-                    styles={`${formErrMsgStyle}`}
-                />
-                <select name="transaction" 
-                    title="Transaction"
-                    defaultValue={defaultVals.transaction as string}
-                    aria-describedby={`transaction-error`}
-                >
-                    <option value="" disabled>Transaction</option>
-                    {transactions.map(t => (<option key={t} value={t}>
-                        {capsEveryWord(t)}
-                    </option>))}
-                </select>
-                
-                {/* Transaction Mode Field */}
-                <FormErrorMessenger describedBy="transaction_mode-error"
-                    errorState={state}
-                    colName="transaction_mode"
-                    styles={`${formErrMsgStyle}`}
-                />
-                <select name="transaction_mode" 
-                    title="Transaction Mode"
-                    defaultValue={defaultVals.transaction_mode as string}
-                    aria-describedby="transaction_mode-error"
-                >
-                    <option value="" disabled>Transaction Mode</option>
-                    {transactionMode.map(t => (<option key={t} value={t}>
-                        {capsEveryWord(t)}
-                    </option>))}
-                </select>
-                
-                {/* Category Field */}
-                <FormErrorMessenger describedBy="category-error"
-                    errorState={state}
-                    colName={"category"}
-                    styles={`${formErrMsgStyle}`}
-                />
-                <select name="category"
-                    defaultValue={defaultVals.category}
-                    title="Category"
-                    aria-describedby="category-eror"
-                >
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>{capsEveryWord(cat)}</option>
-                    ))}
-                </select>
+                    {/* Total Field */}
+                    <div>
+                        <input type="hidden" name="total" value={total} />
+                        <div className="form-field">
+                            <label>Total</label>
+                            <p className="flex-1 border-b">₱ {total}</p>
+                        </div>
+                    </div>
+
+                    {/* Transaction Field */}
+                    <div>
+                        <FormErrorMessenger describedBy="transaction-error"
+                            errorState={state}
+                            colName="transaction"
+                        />
+                        
+                        <div className="form-field">
+                            <label>Transaction</label>
+                            <select name="transaction" 
+                                title="Transaction"
+                                defaultValue={defaultVals.transaction as string}
+                                aria-describedby={`transaction-error`}
+                            >
+                                <option value="" disabled>Transaction</option>
+                                {transactions.map(t => (<option key={t} value={t}>
+                                    {capsEveryWord(t)}
+                                </option>))}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    {/* Transaction Mode Field */}
+                    <div>
+                        <FormErrorMessenger describedBy="transaction_mode-error"
+                            errorState={state}
+                            colName="transaction_mode"
+                        />
+                        
+                        <div className="form-field">
+                            <label>Transaction Mode</label>
+                            <select name="transaction_mode" 
+                                title="Transaction Mode"
+                                defaultValue={defaultVals.transaction_mode as string}
+                                aria-describedby="transaction_mode-error"
+                            >
+                                <option value="" disabled>Transaction Mode</option>
+                                {transactionMode.map(t => (<option key={t} value={t}>
+                                    {capsEveryWord(t)}
+                                </option>))}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    {/* Category Field */}
+                    <div>
+                        <FormErrorMessenger describedBy="category-error"
+                            errorState={state}
+                            colName={"category"}
+                        />
+                        
+                        <div className="form-field">
+                            <label>Category</label>
+                            
+                            <input type="text"
+                                defaultValue={defaultVals.category}
+                                list="categories"
+                                name="category"
+                                title="Category"
+                                placeholder="Category"
+                                className="border-b"
+                                aria-describedby="category-error"
+                            />
+
+                            <datalist id="categories">
+                                {categories.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </datalist>
+                        </div>
+                    </div>
+
+                </div>
                 
                 {/* Buttons and Backrefs */}
-                <div className="flex justify-between items-center pt-5">
+                <div className="pt-5 mx-5 flex justify-between items-center">
                     <Link href={"/records"} 
                         className="hover:font-bold hover:text-[hsl(54,100%,50%)]" 
                         title="Back to records page"
