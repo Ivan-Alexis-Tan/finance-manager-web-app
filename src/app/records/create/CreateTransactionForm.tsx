@@ -50,9 +50,9 @@ export default function CreateTransactionForm({ categories = [], user }: CreateT
             
             {/* Creation Form and Table */}
             {!createMany 
-                ? <div className="flex flex-col items-center">
-                    <TransactionFormFields categories={categories} />
-                </div>
+                ? <TransactionFormFields className="mx-auto"
+                    categories={categories} 
+                />
                 : <div className="flex justify-evenly flex-wrap gap-6 w-full">
 
                     {/* Staged Transactions */}
