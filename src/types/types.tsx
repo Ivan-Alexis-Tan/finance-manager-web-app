@@ -22,8 +22,8 @@ export type AmountFormat = typeof amountFormat[number]
 export interface FormErrorMsgerType {
     errorState: TransactionsActionState 
     describedBy: string
-    styles: string
     colName: keyof NonNullable<TransactionsActionState['errors']>
+    className?: string
 }
 
 export type TransactionsType = Omit<Transactions, "total" | "trans_no" | "transaction_mode" | "transaction"> & { 
