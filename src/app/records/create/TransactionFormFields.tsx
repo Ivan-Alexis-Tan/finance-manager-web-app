@@ -12,8 +12,6 @@ import { createTransactions } from "@/src/actions/actions";
 
 import FormErrorMessenger from "./FormErrorMessenger";
 
-const formFieldStyle = "mb-7"
-
 interface TransactionFormFields {
     categories: string[]
     className?: string
@@ -47,13 +45,15 @@ export default function TransactionFormFields({ categories, className = "" }: Tr
     const total = (evaluatedAmount ?? 0) * (quantiVals.quantity ?? 0)
 
     return (
-        // <form className={`${className ?? ""} flex flex-col amax-w-[20rem] w-full [&>input]:border-b [&>input]:mb-5`}
-        //     action={formAction}
-        // >
-        <form className={`${className ?? ""} w-full max-w-130 [&_div.form-err-msg]:text-(--red-clr) [&_div.form-err-msg]:mb-1 sm:[&_div.form-err-msg]:text-end`}
+        <form className={`${className ?? ""} w-full max-w-130 
+                        [&_div.form-err-msg]:text-(--red-clr) [&_div.form-err-msg]:mb-1 
+                        sm:[&_div.form-err-msg]:text-end`}
             action={formAction}
         >
-            <div className="*:mb-5 p-3 [&_div.form-field]:gap-2 sm:[&_div.form-field]:gap-5 [&_div.form-field]:grid [&_div.form-field]:grid-cols-1 sm:[&_div.form-field]:grid-cols-[minmax(5rem,1fr)_minmax(7rem,2fr)] sm:[&_label]:text-end [&_input]:border-b [&>input]:mb-5 bg-(--fg-tint-clr) rounded-2xl overflow-auto">
+            <div className="*:mb-5 p-3 
+                            sm:[&_div.form-field]:gap-5 [&_div.form-field]:grid [&_div.form-field]:grid-cols-1 
+                            sm:[&_div.form-field]:grid-cols-[minmax(5rem,1fr)_minmax(7rem,2fr)] 
+                            [&_input]:border-b [&>input]:mb-5 rounded-2xl overflow-auto">
                 {/* Date Field */}
                 <div>
                     <FormErrorMessenger describedBy="date-error"
@@ -133,7 +133,7 @@ export default function TransactionFormFields({ categories, className = "" }: Tr
                                     name="amount"
                                     placeholder="Calculate Amount"
                                     onChange={(setTotal("amount"))}
-                                    className={`${formFieldStyle}a border-b w-full`}
+                                    className={`border-b w-full`}
                                 />
                             }
                         </div>
@@ -161,7 +161,7 @@ export default function TransactionFormFields({ categories, className = "" }: Tr
                         <label>Transaction</label>
                         <div>
                             <select name="transaction" 
-                                className={`${formFieldStyle}a bg-gray-700`}
+                                className={`bg-(--gray-clr)`}
                                 title="Transaction"
                                 aria-describedby="transaction"
                                 defaultValue=""
@@ -186,7 +186,7 @@ export default function TransactionFormFields({ categories, className = "" }: Tr
                         <label>Transaction Mode</label>
                         <div>
                             <select name="transaction_mode" 
-                                className={`${formFieldStyle}a bg-gray-700`}
+                                className={`bg-(--gray-clr)`}
                                 title="Transaction Mode"
                                 aria-describedby="transaction_mode-error"
                                 defaultValue=""

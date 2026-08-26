@@ -25,8 +25,6 @@ interface CreateManyTransaction {
     }
 }
 
-const formErrMsgStyle = "text-[hsl(0,100%,70%)] mb-1"
-
 const errorDefault: TransactionsActionState = {
     errors: {},
     message: "",
@@ -60,148 +58,184 @@ export default function CreateManyTransactionForm({ categories = [], setStates, 
     }, [transactionRow.quantity, transactionRow.amount])
 
     return (
-        <div className="flex flex-col
-                        [&>input]:border-b [&>input,&>select]:mb-5 [&>select]:bg-gray-700"
+        <div className="[&_div.form-err-msg]:text-(--red-clr)
+                        [&_input]:border-b [&>select]:bg-gray-700 overflow-auto"
         >
-            {/* Date Field */}
-            <FormErrorMessenger describedBy="date-error"
-                errorState={errorMessage}
-                colName="date"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <input type="date" 
-                name="date"
-                value={`${transactionRow.date}`}
-                title="Date"
-                // style={{ all: "revert" }}
-                aria-describedby="date-error"
-                onChange={setRow("date")}
-            />
-            
-            {/* Details Field */}
-            <FormErrorMessenger describedBy="details-error"
-                errorState={errorMessage}
-                colName="details"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <input type="text" 
-                name="details"
-                placeholder="Details"
-                title="Details"
-                aria-describedby="details-error"
-                onChange={setRow("details")}
-                value={transactionRow.details}
-            />
-
-            {/* Quantity Field */}
-            <FormErrorMessenger describedBy="quantity-error" 
-                errorState={errorMessage}
-                colName="quantity"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <input type="number" min={1}
-                name="quantity"
-                placeholder="Quantity"
-                title="Quantity"
-                aria-describedby="quantity-error"
-                value={transactionRow.quantity}
-                onChange={setRow("quantity")}
-            />
-
-            {/* Amount Field */}
-            <FormErrorMessenger describedBy="amount-error"
-                errorState={errorMessage}
-                colName="amount"
-                styles={`${formErrMsgStyle}`}
-            />
-            <div onDoubleClick={_ => setAmountFrmt(f => f === "calculate" ? "constant" : "calculate")}
-                className="[&>input]:mb-5 [&>input]:border-b"
-            >
-                {amountFrmt === "constant"
-                    ? <input type="number" 
-                        name="amount"
-                        placeholder="Amount"
-                        min={0}
-                        title="Amount"
-                        aria-describedby="amount-error"
-                        value={transactionRow.amount}
-                        onChange={setRow("amount")}
+            <div className="*:mb-5 sm:[&_div.form-field]:gap-3 
+                            [&_div.form-field]:grid [&_div.form-field]:grid-cols-1 
+                            sm:[&_div.form-field]:grid-cols-[minmax(6rem,1fr)_minmax(7.5rem,2fr)]">
+                {/* Date Field */}
+                <div>
+                    <FormErrorMessenger describedBy="date-error"
+                        errorState={errorMessage}
+                        colName="date"
                     />
-                    : <input type="text" 
-                        name="calc_amount"
-                        placeholder="Calculate Amount"
-                        value={transactionRow.amount}
-                        onChange={setRow("amount")}
+
+                    <div className="form-field">
+                        <label>Date</label>
+                        <input type="date" 
+                            name="date"
+                            value={`${transactionRow.date}`}
+                            title="Date"
+                            aria-describedby="date-error"
+                            onChange={setRow("date")}
+                        />
+                    </div>
+                </div>
+                
+                {/* Details Field */}
+                <div>
+                    <FormErrorMessenger describedBy="details-error"
+                        errorState={errorMessage}
+                        colName="details"
                     />
-                }
+
+                    <div className="form-field">
+                        <label>Details</label>
+                        <input type="text" 
+                            name="details"
+                            placeholder="Details"
+                            title="Details"
+                            aria-describedby="details-error"
+                            onChange={setRow("details")}
+                            value={transactionRow.details}
+                        />
+                    </div>
+                </div>
+
+                {/* Quantity Field */}
+                <div>
+                    <FormErrorMessenger describedBy="quantity-error" 
+                        errorState={errorMessage}
+                        colName="quantity"
+                    />
+
+                    <div className="form-field">
+                        <label>Quantity</label>
+                        <input type="number" min={1}
+                            name="quantity"
+                            placeholder="Quantity"
+                            title="Quantity"
+                            aria-describedby="quantity-error"
+                            value={transactionRow.quantity}
+                            onChange={setRow("quantity")}
+                        />
+                    </div>
+                </div>
+
+                {/* Amount Field */}
+                <div>
+                    <FormErrorMessenger describedBy="amount-error"
+                        errorState={errorMessage}
+                        colName="amount"
+                    />
+                    
+                    <div className="form-field [&_input]:w-full">
+                        <label>{amountFrmt === "constant" ? "Amount" : "Calculate Amount"}</label>
+                        <div onDoubleClick={_ => setAmountFrmt(f => f === "calculate" ? "constant" : "calculate")}
+                        >
+                            {amountFrmt === "constant"
+                                ? <input type="number" 
+                                    name="amount"
+                                    placeholder="Amount"
+                                    min={0}
+                                    title="Amount"
+                                    aria-describedby="amount-error"
+                                    value={transactionRow.amount}
+                                    onChange={setRow("amount")}
+                                />
+                                : <input type="text" 
+                                    name="calc_amount"
+                                    placeholder="Calculate Amount"
+                                    value={transactionRow.amount}
+                                    onChange={setRow("amount")}
+                                />
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                {/* Total Field */}
+                <div className="form-field">
+                    <label>Total</label>
+                    <p className="flex-1 border-b">₱ {transactionRow.total as number}</p>
+                </div>
+                
+                {/* Transaction Field */}
+                <div>
+                    <FormErrorMessenger describedBy="transaction-error"
+                        errorState={errorMessage}
+                        colName="transaction"
+                    />
+
+                    <div className="form-field">
+                        <label>Transaction</label>
+                        <div>
+                            <select name="transaction" 
+                                title="Transaction"
+                                aria-describedby="transaction"
+                                value={transactionRow.transaction}
+                                onChange={setRow("transaction")}
+                                className="bg-(--gray-clr)"
+                            >
+                                {transactions.map(t => (<option key={t} value={t}>
+                                    {capsEveryWord(t)}
+                                </option>))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Transaction Mode Field */}
+                <div>
+                    <FormErrorMessenger describedBy="transaction_mode"
+                        errorState={errorMessage}
+                        colName="transaction_mode"
+                    />
+
+                    <div className="form-field">
+                        <label>Transaction Mode</label>
+                        <div>
+                            <select name="transaction_mode" 
+                                title="Transaction Mode"
+                                aria-describedby="transaction_mode-error"
+                                value={transactionRow.transaction_mode}
+                                onChange={setRow("transaction_mode")}
+                                className="bg-(--gray-clr)"
+                            >
+                                {transactionMode.map(t => (<option key={t} value={t}>
+                                    {capsEveryWord(t)}
+                                </option>))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Categories Field */}
+                <div>
+                    <FormErrorMessenger describedBy="category"
+                        errorState={errorMessage}
+                        colName="category"
+                    />
+
+                    <div className="form-field">
+                        <label>Category</label>
+                        <input type="text" 
+                            list="categories"
+                            name="categories"
+                            value={transactionRow.category}
+                            onChange={setRow("category")}
+                            placeholder="Category"
+                        />
+                    </div>
+
+                    <datalist id="categories">
+                        {categories.map(cat => (
+                            <option key={cat} value={cat}/>
+                        ))}
+                    </datalist>
+                </div>
             </div>
-
-            {/* Total Field */}
-            <div className="flex gap-2 mb-5">
-                <span>Total: </span><span className="flex-1 border-b">₱ {transactionRow.total as number}</span>
-            </div>
-            
-            {/* Transaction Field */}
-            <FormErrorMessenger describedBy="transaction-error"
-                errorState={errorMessage}
-                colName="transaction"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <select name="transaction" 
-                title="Transaction"
-                aria-describedby="transaction"
-                value={transactionRow.transaction}
-                onChange={setRow("transaction")}
-            >
-                <option value="" disabled>Transaction</option>
-                {transactions.map(t => (<option key={t} value={t}>
-                    {capsEveryWord(t)}
-                </option>))}
-            </select>
-            
-            {/* Transaction Mode Field */}
-            <FormErrorMessenger describedBy="transaction_mode"
-                errorState={errorMessage}
-                colName="transaction_mode"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <select name="transaction_mode" 
-                title="Transaction Mode"
-                aria-describedby="transaction_mode-error"
-                value={transactionRow.transaction_mode}
-                onChange={setRow("transaction_mode")}
-            >
-                <option value="" disabled>Transaction Mode</option>
-                {transactionMode.map(t => (<option key={t} value={t}>
-                    {capsEveryWord(t)}
-                </option>))}
-            </select>
-            
-            {/* Categories Field */}
-            <FormErrorMessenger describedBy="category"
-                errorState={errorMessage}
-                colName="category"
-                styles={`${formErrMsgStyle}`}
-            />
-
-            <input type="text" 
-                list="categories"
-                name="categories"
-                value={transactionRow.category}
-                onChange={setRow("category")}
-                placeholder="Category"
-            />
-
-            <datalist id="categories">
-                {categories.map(cat => (
-                    <option key={cat} value={cat}/>
-                ))}
-            </datalist>
 
             {/* Submit Button */}
             <div className="flex justify-between items-center pt-5">

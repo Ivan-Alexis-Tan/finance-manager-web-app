@@ -4,7 +4,11 @@ export default function FormErrorMessenger({ describedBy, errorState, colName, c
     const errorMessage = errorState.errors?.[colName]
 
     return errorMessage && (
-        <div id={describedBy} aria-live="polite" aria-atomic="true" className={`${className ?? ""} form-err-msg`}>
+        <div id={describedBy} 
+            aria-live="polite" 
+            aria-atomic="true" 
+            className={`form-err-msg ${className ?? ""}`}
+        >
             <p>{errorMessage}</p>
         </div>
     )
