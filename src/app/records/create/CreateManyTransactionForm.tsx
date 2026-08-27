@@ -18,6 +18,7 @@ type Transactions = TransactionsType[]
 
 interface CreateManyTransaction { 
     categories: string[]
+    distinctDetails: string[]
     user: Session["user"]
     setStates: {
         setStage: React.Dispatch<React.SetStateAction<Transactions>>
@@ -30,7 +31,7 @@ const errorDefault: TransactionsActionState = {
     message: "",
 }
 
-export default function CreateManyTransactionForm({ categories = [], setStates, user }: CreateManyTransaction) {
+export default function CreateManyTransactionForm({ categories = [], distinctDetails = [], setStates, user }: CreateManyTransaction) {
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
     const [transactionRow, setTransactionRow] = useState<TransactionsCreateInput>(defaultRow)
     const [errorMessage, setErrorMessage] = useState<TransactionsActionState>(errorDefault)
@@ -94,6 +95,7 @@ export default function CreateManyTransactionForm({ categories = [], setStates, 
                         <label>Details</label>
                         <input type="text" 
                             name="details"
+                            list="details"
                             placeholder="Details"
                             title="Details"
                             aria-describedby="details-error"
@@ -101,6 +103,12 @@ export default function CreateManyTransactionForm({ categories = [], setStates, 
                             value={transactionRow.details}
                         />
                     </div>
+
+                    <datalist id="details">
+                        {distinctDetails.map(details => (
+                            <option key={details} value={details}>{details}</option>
+                        ))}
+                    </datalist>
                 </div>
 
                 {/* Quantity Field */}

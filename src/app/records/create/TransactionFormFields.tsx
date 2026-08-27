@@ -14,6 +14,7 @@ import FormErrorMessenger from "./FormErrorMessenger";
 
 interface TransactionFormFields {
     categories: string[]
+    distinctDetails: string[]
     className?: string
 }
 
@@ -22,7 +23,7 @@ const quantitativeVals: CalcTransactionTotal = {
     amount: 0,
 }
 
-export default function TransactionFormFields({ categories, className = "" }: TransactionFormFields) {
+export default function TransactionFormFields({ categories, distinctDetails, className = "" }: TransactionFormFields) {
     const [state, formAction] = useActionState(createTransactions, { message: null })
     const [quantiVals, setQuantiVals] = useState<CalcTransactionTotal>(quantitativeVals)
     const [amountFrmt, setAmountFrmt] = useState<AmountFormat>("constant")
@@ -85,11 +86,18 @@ export default function TransactionFormFields({ categories, className = "" }: Tr
                         <label>Details</label>
                         <input type="text" 
                             name="details"
+                            list="details"
                             placeholder="Details"
                             title="Details"
                             aria-describedby="details-error"
                         />
                     </div>
+
+                    <datalist id="details">
+                        {distinctDetails.map(detail => (
+                            <option key={detail} value={detail}>{detail}</option>
+                        ))}
+                    </datalist>
                 </div>
 
                 {/* Quantity Field */}

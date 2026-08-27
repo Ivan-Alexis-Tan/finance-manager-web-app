@@ -137,7 +137,22 @@ export async function getCategories() {
     ).reduce((acc: string[], { category }) => {
         if (category !== "--" && category !== "???") return [...acc, category];
         return acc
-    }, []).sort()
+    }, [])
+}
+
+export async function getDistinctDetails(): Promise<string[]> {
+    const data = await prisma.transactions.findMany({
+        where: { 
+            details: { not: "" }
+        },
+        distinct: ["details"],
+        select: { details: true },
+        orderBy: { details: "asc" }
+    })
+
+    return data
+        .map(({ details }) => details)
+        .filter(Boolean)
 }
 
 export async function createManyTransactions(transactionRows: TransactionsCreateInput[]) {

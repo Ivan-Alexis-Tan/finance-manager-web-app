@@ -12,12 +12,13 @@ import TransactionFormFields from "./TransactionFormFields"
 
 interface CreateTransactionCategories {
     categories: string[]
+    distinctDetails: string[]
     user: Session["user"]
 }
 
 const activeModeStyle = "text-[hsl(0,0%,0%)] bg-[hsl(0,0%,100%)] font-bold"
 
-export default function CreateTransactionForm({ categories = [], user }: CreateTransactionCategories) {
+export default function CreateTransactionForm({ categories = [], distinctDetails = [] , user }: CreateTransactionCategories) {
     const [createMany, setCreateMany] = useState(false)  
     const { 
         stage, 
@@ -51,6 +52,7 @@ export default function CreateTransactionForm({ categories = [], user }: CreateT
             {/* Creation Form and Table */}
             {!createMany 
                 ? <TransactionFormFields className="mx-auto"
+                    distinctDetails={distinctDetails}
                     categories={categories} 
                 />
                 : <div className="flex justify-evenly flex-wrap gap-6 w-full">
@@ -63,7 +65,12 @@ export default function CreateTransactionForm({ categories = [], user }: CreateT
                     />
 
                     {/* Form Field */}
-                    <CreateManyTransactionForm categories={categories} setStates={setStates} user={user} />
+                    <CreateManyTransactionForm 
+                        categories={categories}
+                        distinctDetails={distinctDetails}
+                        setStates={setStates} 
+                        user={user} 
+                    />
                 </div>
             }
         </div>
