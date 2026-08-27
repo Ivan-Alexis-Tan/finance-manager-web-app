@@ -131,10 +131,11 @@ export async function getCategories() {
             distinct: ['category'],
             select: {
                 category: true
-            }
+            },
+            orderBy: { category: "asc" }
         })
-    ).reduce((acc: string[], row) => {
-        if (row.category !== "--" && row.category !== "???") acc.push(row.category);
+    ).reduce((acc: string[], { category }) => {
+        if (category !== "--" && category !== "???") return [...acc, category];
         return acc
     }, []).sort()
 }
