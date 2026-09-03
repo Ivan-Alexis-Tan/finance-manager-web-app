@@ -13,6 +13,10 @@ import { auth } from "@/auth"
 import TransactionsTable from "./TransactionsTable"
 import TransactionPagination from "./TransactionPagination"
 import FilterSearchTransactions from "./FilterSearchTransaction"
+import RecordsTableSktn from "@/src/components/skeleton/RecordsTableSktn"
+import RecordsPaginationSktn from "@/src/components/skeleton/RecordsPaginationSktn"
+import { Suspense } from "react"
+import { divide } from "mathjs"
 
 type TransactionParamKeys = Partial<Record<typeof transactionParamKeys[number], string>>
 
@@ -82,12 +86,21 @@ export default async function Page(props: SearchParamsProps) {
             </Link>
 
             <FilterSearchTransactions categories={categories} />
-            
+
             <div className="mb-5">
-                <TransactionPagination totalRows={totalRows} />
+                <Suspense fallback={<RecordsPaginationSktn />}>
+                    <TransactionPagination totalRows={totalRows} />
+                </Suspense>
             </div>
 
-            <TransactionsTable transactionData={transactionsData as TransactionsType[]} />
+            <div className="overflow-auto">
+                <Suspense fallback={<RecordsTableSktn className="mx-auto" />}>
+                    <TransactionsTable 
+                        className="mx-auto max-w-300 w-full [&_table]:rounded"
+                        transactionData={transactionsData as TransactionsType[]} 
+                    />
+                </Suspense>
+            </div>
         </div>
     )
 }
