@@ -7,6 +7,9 @@ export default function Spinner({ className }: { className?: string }) {
                 border-4 
                 rounded-full 
                 border-t-(--accent-clr)
+                border-l-(--accent-clr)
+                border-r-transparent
+                border-b-transparent
             `} 
         />
     )
