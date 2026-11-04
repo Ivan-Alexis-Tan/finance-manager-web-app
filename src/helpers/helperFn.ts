@@ -1,5 +1,5 @@
 import { TransactionsGetPayload } from "../generated/prisma/models"
-import { TransactionsType } from "../types/types"
+import { TransactionColumn, TransactionMode, TransactionsType } from "../types/types"
 
 export function dateFormatter(dateStr: string) {
     const date = new Date(`${dateStr}`)
@@ -19,6 +19,16 @@ export function serializedTransaction(transaction: TransactionsGetPayload<{}>) {
     return {...transaction, trans_no: Number(transaction.trans_no), total: Number(transaction.total)}
 }
 
-export function serializedTransactions(transactionsData: TransactionsGetPayload<{}>[]) {
-    return transactionsData.map(row => ({...row, trans_no: Number(row.trans_no), total: Number(row.total)}) )
+export function serializedTransactions(
+    transactionsData: TransactionsGetPayload<{}>[]
+): TransactionsType[] {
+    return transactionsData.map(
+        row => ({
+            ...row, 
+            trans_no: Number(row.trans_no), 
+            total: Number(row.total),
+            transaction: row.transaction as TransactionColumn,
+            transaction_mode: row.transaction_mode as TransactionMode
+        })
+    )
 }
