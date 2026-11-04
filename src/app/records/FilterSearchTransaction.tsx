@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import React, { useState } from "react"
+import React, { use, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import { 
@@ -14,10 +14,11 @@ import { capsEveryWord } from "@/src/helpers/helperFn"
 import FieldFormDate from "./FieldFormDate"
 import FieldFormAmount from "./FieldFormAmount"
 
-export default function FilterSearchTransactions({ categories = [] }: { categories: string[]}) {
+export default function FilterSearchTransactions({ categoriesPromise }: { categoriesPromise: Promise<string[]>}) {
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
+    const categories = categoriesPromise ? use(categoriesPromise) : []
     
     const [enable, setEnable] = useState(false)
     const [formKey, setFormKey] = useState(0)

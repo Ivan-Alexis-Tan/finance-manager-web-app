@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation"
+import { use } from "react";
 
 interface PageArrowComp {
     direction: "left" | "right"
     href: string
 }
 
-export default function TransactionPagination({ totalRows }: { totalRows: number }) {
+export default function TransactionPagination({ totalRowsPromise }: { totalRowsPromise: Promise<number> }) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const totalRows = use(totalRowsPromise)
     const currentPage = Number(searchParams.get("page")) || 1;
 
     const totalPages = Math.ceil(totalRows / 20)

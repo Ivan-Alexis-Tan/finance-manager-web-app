@@ -1,20 +1,21 @@
 "use client"
 import Link from "next/link";
-import { useState } from "react";
+import { use, useState } from "react";
 
 import { TransactionsType } from "@/src/types/types";
 
-import { capsEveryWord, dateFormatter } from "@/src/helpers/helperFn";
+import { capsEveryWord, dateFormatter, serializedTransactions } from "@/src/helpers/helperFn";
 import { deleteTransaction } from "@/src/actions/actions";
 import { PopupWindow, usePopupWindow } from "@/src/components/PopupWindows";
 
 type TransactionTable = { 
-    transactionData: TransactionsType[] 
+    transactionData: Promise<TransactionsType[]>
     className?: string
 }
 
-export default function TransactionsTable({ transactionData = [], className }: TransactionTable ) {
+export default function TransactionsTable({ transactionData, className }: TransactionTable ) {
     const [showPopup, setShowPopup] = useState<Boolean>(false)
+    const serialized = transactionData ? use(transactionData) : []
 
     const { popupStates, setPopupWindow } = usePopupWindow({
         header: "Confirm Delete",
@@ -25,7 +26,7 @@ export default function TransactionsTable({ transactionData = [], className }: T
     });
 
     return (
-        transactionData.length >= 1
+        serialized.length >= 1
             ? <div className={`${className ?? ""} border-collapse`}>
                 {showPopup
                     && <PopupWindow popupStates={popupStates} />
@@ -46,7 +47,7 @@ export default function TransactionsTable({ transactionData = [], className }: T
                         </tr>
                     </thead>
                     <tbody>
-                        {transactionData.map(data => (
+                        {serialized.map(data => (
                             <tr key={data.trans_no}>
                                 <td>
                                     <div className="flex gap-1">
