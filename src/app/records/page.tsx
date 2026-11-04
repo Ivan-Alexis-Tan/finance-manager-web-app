@@ -1,13 +1,12 @@
 import { prisma } from "@/src/lib/prisma"
 import Link from "next/link"
+import { Suspense } from "react"
 
 import { Session } from "next-auth"
-import { TransactionsType } from "@/src/types/types"
 
 import { getCategories } from "@/src/actions/actions"
 import { amountOpKeys, dateOpKeys, transactionParamKeys } from "@/src/helpers/constants"
 import { filterAmount, filterDate } from "@/src/actions/filteringHelpers"
-import { serializedTransactions } from "@/src/helpers/helperFn"
 import { auth } from "@/auth"
 
 import TransactionsTable from "./TransactionsTable"
@@ -15,8 +14,7 @@ import TransactionPagination from "./TransactionPagination"
 import FilterSearchTransactions from "./FilterSearchTransaction"
 import RecordsTableSktn from "@/src/components/skeleton/RecordsTableSktn"
 import RecordsPaginationSktn from "@/src/components/skeleton/RecordsPaginationSktn"
-import { Suspense } from "react"
-import { divide } from "mathjs"
+import { getManyTransactions } from "@/src/actions/transactions"
 
 type TransactionParamKeys = Partial<Record<typeof transactionParamKeys[number], string>>
 
@@ -52,23 +50,14 @@ export default async function Page(props: SearchParamsProps) {
         { category: { contains: queries.category } },
     ]
 
-    const data = await prisma.transactions.findMany({
-        where: { 
-            userId: Number(session?.user.id as Session["user"]["id"]),
-            AND: (Object.keys(queries).length >= 1) ? filterConfigs : undefined,
-        },
-        orderBy: { date: "desc" },
-        take: 20,
-        skip: Number(currentPage) * 20 - 20,
-    })
-    const transactionsData = serializedTransactions(data)
+    const transactionData = getManyTransactions(session as Session, queries, filterConfigs, currentPage)
 
-    const totalRows = await prisma.transactions.count({
+    const totalRows = prisma.transactions.count({
         where: (Object.keys(queries).length >= 1) 
             ? { AND: filterConfigs } 
             : undefined
     })
-    const categories = await getCategories()
+    const categories = getCategories()
 
     return (
         <div>
@@ -85,11 +74,11 @@ export default async function Page(props: SearchParamsProps) {
                 </span>
             </Link>
 
-            <FilterSearchTransactions categories={categories} />
+            <FilterSearchTransactions categoriesPromise={categories} />
 
             <div className="mb-5">
                 <Suspense fallback={<RecordsPaginationSktn />}>
-                    <TransactionPagination totalRows={totalRows} />
+                    <TransactionPagination totalRowsPromise={totalRows} />
                 </Suspense>
             </div>
 
@@ -97,7 +86,7 @@ export default async function Page(props: SearchParamsProps) {
                 <Suspense fallback={<RecordsTableSktn className="mx-auto" />}>
                     <TransactionsTable 
                         className="mx-auto max-w-300 w-full [&_table]:rounded"
-                        transactionData={transactionsData as TransactionsType[]} 
+                        transactionData={transactionData} 
                     />
                 </Suspense>
             </div>
